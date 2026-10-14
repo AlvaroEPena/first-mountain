@@ -1,9 +1,9 @@
 # Progress Log
 
-**Current phase:** 3-spec-approved
+**Current phase:** 4-scaffolded
 <!-- phases: 1-intake · 2-research · 3-spec-approved · 4-scaffolded · 5-building (slice N) · 6-qa · 7-review · 8-done -->
 
-**Next step:** scaffold (Phase 4)
+**Next step:** Phase 5 build (frontend-engineer: design system, logo, all pages)
 
 ## Gate status
 
@@ -45,3 +45,13 @@
 ### 2026-10-14 — 3-spec-approved
 
 - User approved the spec as presented (stack, scope, design).
+
+### 2026-10-14 — 4-scaffolded
+- Done: create-astro minimal (temp folder, moved in), deps installed (versions per research),
+  configs from zydeco (eslint, prettier, vitest, tsconfig, wrangler, _headers with Maps frame-src),
+  `images:prepare` (46 photos at 2400px, 34 MB, no metadata), contract `src/lib/contracts/quote.ts`,
+  data `site.ts`, `gallery.ts` (45 work photos + atmosphere photo 26), `reviews.ts` (27),
+  `service-ids.ts`, unit tests (16 passing incl. no-EXIF/GPS check), CLAUDE.md, launch.json (4334),
+  registry row, git init + initial commit.
+- Gates: `npm run check` pass, `npm run build` pass, dev server starts on 4334.
+- Note: committed photos are 34 MB (research estimated 15–25 MB); acceptable, revisit if needed.

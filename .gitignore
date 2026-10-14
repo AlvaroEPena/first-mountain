@@ -1,0 +1,21 @@
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# logs
+npm-debug.log*
+# environment variables
+.env
+.env.*
+!.env.example
+# OS / editor
+.DS_Store
+.idea/
+# test output / tooling
+playwright-report/
+test-results/
+.wrangler/
+# raw downloads from images:prepare (never commit: full-size originals can carry GPS)
+scripts/.cache/

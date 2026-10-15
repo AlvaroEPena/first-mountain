@@ -33,7 +33,11 @@ describe('zonedClock', () => {
 describe('getOpenStatus', () => {
   it('is open during weekday hours and reports the closing time', () => {
     const status = getOpenStatus(at('2026-10-14T16:30:00Z'), WEEKDAYS, DENVER);
-    expect(status).toEqual({ isOpen: true, weekday: 3, next: { weekday: 3, time: '19:00' } });
+    expect(status).toEqual({
+      isOpen: true,
+      weekday: 3,
+      next: { weekday: 3, time: '19:00', daysAhead: 0 },
+    });
     expect(statusMessage(status)).toBe('Open now, until 7 pm');
   });
 
@@ -52,7 +56,11 @@ describe('getOpenStatus', () => {
   it('after Friday closing, points to Monday', () => {
     // Fri 16 Oct 2026, 20:00 MDT.
     const status = getOpenStatus(at('2026-10-17T02:00:00Z'), WEEKDAYS, DENVER);
-    expect(status).toEqual({ isOpen: false, weekday: 5, next: { weekday: 1, time: '07:00' } });
+    expect(status).toEqual({
+      isOpen: false,
+      weekday: 5,
+      next: { weekday: 1, time: '07:00', daysAhead: 3 },
+    });
     expect(statusMessage(status)).toBe('Closed, opens Monday at 7 am');
   });
 
@@ -61,6 +69,23 @@ describe('getOpenStatus', () => {
     const status = getOpenStatus(at('2026-10-18T18:00:00Z'), WEEKDAYS, DENVER);
     expect(status.isOpen).toBe(false);
     expect(status.next?.weekday).toBe(1);
+  });
+
+  it('says tomorrow for the next day', () => {
+    // Thu 15 Oct 2026, 20:00 MDT: weekday hours open again Friday morning.
+    const status = getOpenStatus(at('2026-10-16T02:00:00Z'), WEEKDAYS, DENVER);
+    expect(statusMessage(status)).toBe('Closed, opens tomorrow at 7 am');
+  });
+
+  it('with single-day hours, a week ahead is the weekday name, never "today"', () => {
+    const mondaysOnly: HoursRule[] = [{ days: [1], opens: '08:00', closes: '12:00' }];
+    // Mon 12 Oct 2026, 13:00 MDT: closed for the day; next opening is next Monday.
+    const status = getOpenStatus(at('2026-10-12T19:00:00Z'), mondaysOnly, DENVER);
+    expect(status.next).toEqual({ weekday: 1, time: '08:00', daysAhead: 7 });
+    expect(statusMessage(status)).toBe('Closed, opens Monday at 8 am');
+    // Sun 11 Oct 2026, 13:00 MDT: Monday is tomorrow.
+    const sunday = getOpenStatus(at('2026-10-11T19:00:00Z'), mondaysOnly, DENVER);
+    expect(statusMessage(sunday)).toBe('Closed, opens tomorrow at 8 am');
   });
 
   it('handles a week with no hours at all', () => {

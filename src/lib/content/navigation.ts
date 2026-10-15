@@ -1,3 +1,5 @@
+import { canonicalPath } from '../seo';
+
 /** Primary navigation and the one estimate CTA label used everywhere (one label per intent). */
 export interface NavLink {
   href: string;
@@ -16,6 +18,6 @@ export const estimateCta = { href: '/contact#quote', label: 'Get a free estimate
 
 /** True when `href` is the current page or a parent of it. */
 export function isCurrentPath(pathname: string, href: string): boolean {
-  const path = pathname.replace(/(\/index)?\.html$/, '').replace(/\/$/, '') || '/';
+  const path = canonicalPath(pathname);
   return path === href || path.startsWith(`${href}/`);
 }

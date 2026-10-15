@@ -7,7 +7,6 @@ import {
   isGalleryFilter,
   matchesFilter,
   resultMessage,
-  visibleIds,
 } from '../../src/lib/gallery-filter';
 
 const items = [
@@ -29,15 +28,17 @@ describe('isGalleryFilter', () => {
   });
 });
 
-describe('matchesFilter and visibleIds', () => {
+describe('matchesFilter', () => {
+  const shown = (filter: Parameters<typeof matchesFilter>[1]) =>
+    items.filter((item) => matchesFilter(item.category, filter)).map((item) => item.id);
+
   it('shows everything for "all"', () => {
-    expect(matchesFilter('courts', ALL_FILTER)).toBe(true);
-    expect(visibleIds(items, ALL_FILTER)).toEqual(['a', 'b', 'c']);
+    expect(shown(ALL_FILTER)).toEqual(['a', 'b', 'c']);
   });
 
   it('keeps only the chosen category, in order', () => {
-    expect(visibleIds(items, 'driveways')).toEqual(['a', 'c']);
-    expect(visibleIds(items, 'patios')).toEqual([]);
+    expect(shown('driveways')).toEqual(['a', 'c']);
+    expect(shown('patios')).toEqual([]);
   });
 });
 

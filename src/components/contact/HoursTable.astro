@@ -131,9 +131,10 @@ const rows = WEEKDAY_NAMES.map((name, index) => {
     const today = block.querySelector<HTMLElement>(`tr[data-weekday="${result.weekday}"]`);
     if (today) {
       today.setAttribute('aria-current', 'date');
-      today
-        .querySelector('th')
-        ?.insertAdjacentHTML('beforeend', '<span class="visually-hidden"> (today)</span>');
+      const note = document.createElement('span');
+      note.className = 'visually-hidden';
+      note.textContent = ' (today)';
+      today.querySelector('th')?.append(note);
     }
   }
 </script>

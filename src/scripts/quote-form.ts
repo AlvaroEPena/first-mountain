@@ -1,10 +1,9 @@
 import {
   parseQuoteForm,
   projectTypeFromQuery,
-  type QuoteField,
   type QuoteFieldErrors,
 } from '../lib/contracts/quote';
-import { isHoneypotTripped, submitQuote } from '../lib/quote-submit';
+import { isBotSubmission, submitQuote, VISIBLE_FIELDS } from '../lib/quote-submit';
 
 /**
  * Progressive enhancement for the quote form: preselects the project type from `?type=`,
@@ -12,16 +11,6 @@ import { isHoneypotTripped, submitQuote } from '../lib/quote-submit';
  * With no PUBLIC_FORM_ENDPOINT it runs in demo mode and says clearly that nothing is sent.
  */
 const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
-
-const FIELDS: readonly QuoteField[] = [
-  'name',
-  'phone',
-  'email',
-  'address',
-  'projectType',
-  'timeframe',
-  'message',
-];
 
 const DONE_TITLES = {
   demo: 'Your request looks good, but this preview does not send it.',
@@ -42,6 +31,12 @@ function setup(target: HTMLFormElement): void {
   const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT || undefined;
   const idleLabel = submitLabel?.textContent ?? '';
 
+  // The submit button ships hidden and disabled: without this script the form cannot send.
+  if (submit) {
+    submit.hidden = false;
+    submit.disabled = false;
+  }
+
   const setStatus = (text: string) => {
     if (status) status.textContent = text;
   };
@@ -49,7 +44,7 @@ function setup(target: HTMLFormElement): void {
   /** Writes each field's message (or clears it); returns the first invalid control. */
   const showErrors = (errors: QuoteFieldErrors): HTMLElement | undefined => {
     let firstInvalid: HTMLElement | undefined;
-    for (const name of FIELDS) {
+    for (const name of VISIBLE_FIELDS) {
       const control = target.elements.namedItem(name);
       const holder = target.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
       if (!(control instanceof HTMLElement) || !holder) continue;
@@ -70,7 +65,7 @@ function setup(target: HTMLFormElement): void {
     if (!submit) return;
     submit.disabled = isBusy;
     submit.toggleAttribute('data-loading', isBusy);
-    if (submitLabel) submitLabel.textContent = isBusy ? 'Sending...' : idleLabel;
+    if (submitLabel) submitLabel.textContent = isBusy ? 'Sending…' : idleLabel;
   };
 
   const showDone = (mode: 'demo' | 'sent') => {
@@ -104,13 +99,12 @@ function setup(target: HTMLFormElement): void {
     event.preventDefault();
     const data = new FormData(target);
 
-    // Bots fill the hidden field: pretend success so they learn nothing, send nothing.
-    if (isHoneypotTripped(data)) {
+    const parsed = parseQuoteForm(data);
+    // Bots fill the hidden field (the schema's honeypot rule): pretend success, send nothing.
+    if (!parsed.ok && isBotSubmission(parsed.errors)) {
       showDone('sent');
       return;
     }
-
-    const parsed = parseQuoteForm(data);
     if (!parsed.ok) {
       const count = Object.keys(parsed.errors).length;
       setStatus(

@@ -1,4 +1,5 @@
 ---
+import { ownerFirstName } from '../../lib/owner';
 import { estimateCta } from '../../lib/content/navigation';
 import { site } from '../../data/site';
 import Icon from '../ui/Icon.astro';
@@ -10,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = 'Tell Frank what you want poured.',
-  body = 'Estimates are free, and Frank usually comes out to see the job before he bids it.',
+  title = `Tell ${ownerFirstName} what you want poured.`,
+  body = `Estimates are free, and ${ownerFirstName} usually comes out to see the job before he bids it.`,
 } = Astro.props;
 ---
 

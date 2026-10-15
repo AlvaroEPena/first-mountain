@@ -1,4 +1,5 @@
 ---
+import { ownerFirstName } from '../lib/owner';
 import CtaBand from '../components/layout/CtaBand.astro';
 import PageHero from '../components/layout/PageHero.astro';
 import FilterBar from '../components/projects/FilterBar.astro';
@@ -29,7 +30,7 @@ const crumbs = [{ name: 'Projects', path: '/projects' }];
   <CtaBand
     slot="closing"
     title="Want one of these at your place?"
-    body="Tell Frank which one you have in mind. Estimates are free, and he usually comes out to see the spot."
+    body={`Tell ${ownerFirstName} which one you have in mind. Estimates are free, and he usually comes out to see the spot.`}
   />
 </BaseLayout>
 

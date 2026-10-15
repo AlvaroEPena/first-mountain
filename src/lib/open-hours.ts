@@ -14,8 +14,8 @@ export interface OpenStatus {
   isOpen: boolean;
   /** ISO weekday of `now` in the business time zone. */
   weekday: number;
-  /** Closing time today when open, otherwise the next opening. */
-  next?: { weekday: number; time: string };
+  /** Closing time today when open, otherwise the next opening (`daysAhead` 0 = today). */
+  next?: { weekday: number; time: string; daysAhead: number };
 }
 
 const SHORT_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
@@ -62,7 +62,7 @@ export function getOpenStatus(
   const { weekday, minutes } = zonedClock(now, timeZone);
   const today = hoursFor(weekday, rules);
   if (today && minutes >= toMinutes(today.opens) && minutes < toMinutes(today.closes)) {
-    return { isOpen: true, weekday, next: { weekday, time: today.closes } };
+    return { isOpen: true, weekday, next: { weekday, time: today.closes, daysAhead: 0 } };
   }
   // Closed: find the next opening, starting later today if it is still before opening time.
   for (let offset = 0; offset < 8; offset += 1) {
@@ -70,7 +70,7 @@ export function getOpenStatus(
     const rule = hoursFor(day, rules);
     if (!rule) continue;
     if (offset === 0 && minutes >= toMinutes(rule.opens)) continue;
-    return { isOpen: false, weekday, next: { weekday: day, time: rule.opens } };
+    return { isOpen: false, weekday, next: { weekday: day, time: rule.opens, daysAhead: offset } };
   }
   return { isOpen: false, weekday };
 }
@@ -92,7 +92,15 @@ export function statusMessage(status: OpenStatus): string {
   if (!status.next) return status.isOpen ? 'Open now' : 'Closed';
   const time = formatTime(status.next.time);
   if (status.isOpen) return `Open now, until ${time}`;
-  const day =
-    status.next.weekday === status.weekday ? 'today' : WEEKDAY_NAMES[status.next.weekday - 1];
-  return `Closed, opens ${day} at ${time}`;
+  return `Closed, opens ${dayLabel(status.next)} at ${time}`;
+}
+
+/**
+ * Counted from days ahead, not by comparing weekdays: with single-day hours the next opening
+ * can be the same weekday a week later, which must not read as "today".
+ */
+function dayLabel(next: { weekday: number; daysAhead: number }): string {
+  if (next.daysAhead === 0) return 'today';
+  if (next.daysAhead === 1) return 'tomorrow';
+  return WEEKDAY_NAMES[next.weekday - 1] ?? '';
 }

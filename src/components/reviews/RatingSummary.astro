@@ -24,7 +24,6 @@ const { value, count, capturedOn } = site.rating;
   <div class="rating__detail">
     <Stars rating={value} label={`Rated ${value.toFixed(1)} out of 5`} />
     <p class="rating__sentence">
-      <span class="visually-hidden">{`${value.toFixed(1)} `}</span>
       from {count} Google reviews, as of {monthYear(capturedOn)}
     </p>
     <a
@@ -49,7 +48,6 @@ const { value, count, capturedOn } = site.rating;
   }
   .rating__value {
     font-family: var(--font-display);
-    font-stretch: var(--display-stretch);
     font-weight: 800;
     line-height: 0.9;
     letter-spacing: -0.04em;

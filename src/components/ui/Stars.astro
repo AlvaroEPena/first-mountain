@@ -1,27 +1,48 @@
 ---
+import { starFills } from '../../lib/stars';
 import { STAR_PATH } from './icons';
 
 interface Props {
-  /** Whole stars to fill (1 to 5). */
+  /** Rating out of 5; fractions show as a partly filled star (4.7 is four and seven tenths). */
   rating: number;
-  /** Accessible label; the stars themselves are decorative. */
+  /** Accessible label; the drawn stars are decorative. */
   label?: string;
 }
 
 const { rating, label = `${rating} out of 5 stars` } = Astro.props;
-const filled = Math.round(rating);
+const fills = starFills(rating);
 ---
 
 <span class="stars" role="img" aria-label={label}>
-  {Array.from({ length: 5 }, (_, index) => (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d={STAR_PATH}
-        fill={index < filled ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linejoin="round"
-      />
-    </svg>
+  {fills.map((fill) => (
+    <span class="star" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d={STAR_PATH} fill="none" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+      {fill > 0 && (
+        <span class="star__fill" style={`width: ${Math.round(fill * 100)}%`}>
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d={STAR_PATH} fill="currentColor" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+        </span>
+      )}
+    </span>
   ))}
 </span>
+
+<style>
+  /* The filled star is clipped to its share of the width, so 4.7 shows a 70% fifth star. */
+  .star {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+  }
+  .star__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    overflow: hidden;
+  }
+  .star__fill :global(svg) {
+    max-width: none;
+  }
+</style>

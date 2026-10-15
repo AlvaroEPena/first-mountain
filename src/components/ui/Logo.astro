@@ -26,6 +26,9 @@ const { variant = 'lockup', tone = 'onLight', mono = false, class: className, la
 
 // Unique per render so clip-path ids never collide when the logo appears twice on a page.
 const uid = nextId('fm');
+// The brand name is never machine-translated. `translate` is a global HTML attribute that
+// Astro's SVGAttributes type omits, so it is passed through a spread.
+const NO_TRANSLATE: Record<string, string> = { translate: 'no' };
 const colors = BRAND[tone];
 const markColors = mono ? { peak: colors.ink, slab: colors.ink } : colors;
 
@@ -44,5 +47,6 @@ const { viewBox, markup } = {
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
   focusable="false"
+  {...NO_TRANSLATE}
   set:html={markup}
 />

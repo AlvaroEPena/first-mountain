@@ -32,6 +32,8 @@ export async function runMotion(): Promise<void> {
   // The head failsafe already revealed everything (slow network): do not replay and flash.
   if (!root.hasAttribute('data-motion')) return;
   await afterViewTransition();
+  // The failsafe may have fired while we waited: content is already shown, so do not animate it.
+  if (!root.hasAttribute('data-motion')) return;
   const media = gsap.matchMedia();
 
   media.add(

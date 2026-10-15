@@ -11,14 +11,6 @@ export function matchesFilter(itemCategory: string, filter: GalleryFilter): bool
   return filter === ALL_FILTER || itemCategory === filter;
 }
 
-/** Ids matching the active filter, in manifest order. */
-export function visibleIds<T extends { id: string; category: string }>(
-  items: readonly T[],
-  filter: GalleryFilter,
-): string[] {
-  return items.filter((item) => matchesFilter(item.category, filter)).map((item) => item.id);
-}
-
 /** Per-filter totals for the chip badges. */
 export function filterCounts<T extends { category: string }>(
   items: readonly T[],

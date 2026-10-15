@@ -9,11 +9,12 @@ import ServiceBento from '../components/home/ServiceBento.astro';
 import CtaBand from '../components/layout/CtaBand.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../data/site';
+import { monthYear } from '../lib/rating';
 ---
 
 <BaseLayout
   title={`${site.name} | Concrete and hardscape in ${site.address.city}`}
-  description={`Family-owned concrete contractor in ${site.address.city}: driveways, patios, sport courts, steps, retaining walls and hardscape. Rated ${site.rating.value} on Google. Free estimates.`}
+  description={`Family-owned concrete contractor in ${site.address.city}: driveways, patios, sport courts, steps, retaining walls and hardscape. Rated ${site.rating.value} on Google as of ${monthYear(site.rating.capturedOn)}. Free estimates.`}
   headerMode="overlay"
   closingSurface="cured"
 >

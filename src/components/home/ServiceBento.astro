@@ -6,28 +6,48 @@ import Icon from '../ui/Icon.astro';
 import Photo from '../ui/Photo.astro';
 
 /**
- * Eight services, eight cells. Five carry a real project photo; the three without an honest
- * photo get a distinct surface (topo on cured, granite, wide cured) instead of a fake image.
+ * Eight services, eight cells. Six carry a real project photo; RV pads and fences have no honest
+ * photo in the gallery, so they get a distinct surface (granite with topo, wide cured with the
+ * featured customer quote) instead of a fake image.
  */
 interface Cell {
   id: ServiceId;
   area: string;
-  look: 'photo' | 'topo' | 'granite' | 'plain';
+  look: 'photo' | 'granite' | 'plain';
   photo?: string;
+  /** Rendered width class, for an accurate responsive sizes attribute. */
+  span?: 'wide' | 'narrow';
+  /** Spans two rows on wide screens: square crop and larger sizes, so it stays sharp. */
+  tall?: boolean;
   /** Wide text-only cells carry the service's featured customer quote. */
   showQuote?: boolean;
 }
 
 const cells: Cell[] = [
-  { id: 'driveways', area: 'drive', look: 'photo', photo: 'photo-28' },
-  { id: 'sport-courts', area: 'court', look: 'photo', photo: 'photo-03' },
-  { id: 'patios-pads', area: 'patio', look: 'photo', photo: 'photo-43' },
-  { id: 'retaining-walls', area: 'wall', look: 'photo', photo: 'photo-25' },
-  { id: 'steps-walkways', area: 'steps', look: 'topo' },
-  { id: 'hardscape', area: 'hard', look: 'photo', photo: 'photo-19' },
+  { id: 'driveways', area: 'drive', look: 'photo', photo: 'photo-28', span: 'wide' },
+  { id: 'sport-courts', area: 'court', look: 'photo', photo: 'photo-03', span: 'wide' },
+  { id: 'patios-pads', area: 'patio', look: 'photo', photo: 'photo-43', span: 'narrow' },
+  {
+    id: 'retaining-walls',
+    area: 'wall',
+    look: 'photo',
+    photo: 'photo-25',
+    span: 'narrow',
+    tall: true,
+  },
+  { id: 'steps-walkways', area: 'steps', look: 'photo', photo: 'photo-07', span: 'narrow' },
+  { id: 'hardscape', area: 'hard', look: 'photo', photo: 'photo-19', span: 'wide' },
   { id: 'rv-pads', area: 'rv', look: 'granite' },
   { id: 'fences', area: 'fence', look: 'plain', showQuote: true },
 ];
+
+/** Phones: one column inside the gutters. Tablets: half or full width. Desktop: 1 or 2 of 4. */
+const SIZES = {
+  wide: '(min-width: 64rem) min(44vw, 42rem), (min-width: 48rem) 46vw, calc(100vw - 2rem)',
+  narrow: '(min-width: 64rem) min(22vw, 21rem), (min-width: 48rem) 46vw, calc(100vw - 2rem)',
+  // A square crop filling a tile two rows tall needs about one and a half times its width.
+  tall: '(min-width: 64rem) min(34vw, 32rem), (min-width: 48rem) 46vw, calc(100vw - 2rem)',
+} as const;
 
 const byId = (id: ServiceId): Service => {
   const service = services.find((entry) => entry.id === id);
@@ -62,8 +82,9 @@ const byId = (id: ServiceId): Service => {
                   <Photo
                     id={cell.photo}
                     alt=""
-                    widths={[480, 720, 1000, 1400]}
-                    sizes="(min-width: 64rem) 50vw, (min-width: 48rem) 50vw, 100vw"
+                    widths={[360, 540, 720, 960, 1280]}
+                    sizes={cell.tall ? SIZES.tall : SIZES[cell.span ?? 'narrow']}
+                    aspect={cell.tall ? 1 : 3 / 2}
                   />
                 </span>
               )}
@@ -99,8 +120,10 @@ const byId = (id: ServiceId): Service => {
     list-style: none;
     grid-template-areas: 'drive' 'court' 'patio' 'wall' 'steps' 'hard' 'rv' 'fence';
   }
+  /* The link flows inside the cell, so a tile grows to fit its text instead of clipping it. */
   .bento__cell {
     position: relative;
+    display: flex;
     overflow: hidden;
     min-height: 9rem;
     border-radius: var(--radius-slab);
@@ -109,12 +132,6 @@ const byId = (id: ServiceId): Service => {
     min-height: 15rem;
     background: var(--color-slate);
     color: var(--color-on-dark);
-  }
-  .bento__cell--topo {
-    background-color: var(--color-cured);
-    background-image: url('../../assets/brand/topo-on-light.svg');
-    background-size: 220% auto;
-    background-position: 30% 40%;
   }
   .bento__cell--granite {
     background-color: var(--color-granite);
@@ -128,8 +145,8 @@ const byId = (id: ServiceId): Service => {
     border: var(--joint);
   }
   .bento__link {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    flex: 1 1 auto;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -169,7 +186,6 @@ const byId = (id: ServiceId): Service => {
   }
   .bento__name {
     font-family: var(--font-display);
-    font-stretch: 112%;
     font-size: var(--text-h3);
     font-weight: 800;
     line-height: 1.1;
@@ -178,7 +194,6 @@ const byId = (id: ServiceId): Service => {
   .bento__quote {
     max-width: 34ch;
     margin-bottom: 0.75rem;
-    font-family: var(--font-display);
     font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
     font-weight: 600;
     line-height: 1.3;

@@ -1,15 +1,44 @@
 /* Element defaults and the layout primitives every page uses. */
 
+/*
+ * Scroll padding keeps anchors and keyboard focus clear of the fixed chrome (WCAG 2.4.11):
+ * the header on top, plus any sticky sub-nav on that page, and the action bar on phones.
+ */
 html {
+  --subnav-h: 0rem;
   background: var(--color-chalk);
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  scroll-padding-top: calc(var(--header-h) + var(--subnav-h) + 1.5rem);
   -webkit-text-size-adjust: 100%;
 }
 
+html:has([data-subnav]) {
+  --subnav-h: var(--service-nav-h);
+}
+
+html:has([data-filter-bar]:not([hidden])) {
+  --subnav-h: var(--filter-bar-h);
+}
+
+@media (max-width: 47.99rem) {
+  html {
+    scroll-padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom) + 1rem);
+  }
+}
+
+/* Reduced motion: nothing moves. Fades and colour changes stay; transforms and animations go. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-property:
+      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+      opacity, box-shadow !important;
   }
 }
 
@@ -57,15 +86,12 @@ h4 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-stretch: var(--display-stretch);
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 h3,
 h4 {
-  font-weight: 700;
-  font-stretch: 108%;
   letter-spacing: -0.01em;
 }
 

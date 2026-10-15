@@ -79,10 +79,10 @@
   --shell: 86rem;
   --header-h: 4.25rem;
   --action-bar-h: 4.25rem;
+  /* Heights of the sticky sub-navs (services jump links, gallery filters), for scroll padding. */
+  --service-nav-h: 4.25rem;
+  --filter-bar-h: 6.5rem;
   --section-y: clamp(4rem, 2.6rem + 6vw, 8.5rem);
-
-  /* Expanded display width; Archivo's wdth axis runs 62 to 125. */
-  --display-stretch: 118%;
 
   /* Control-joint hairline: the saw cut in a finished slab. */
   --joint: 1px solid rgb(23 28 31 / 0.16);

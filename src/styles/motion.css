@@ -1,0 +1,82 @@
+/*
+ * Motion. Everything is visible by default. Hidden start states apply only while
+ * html[data-motion="on"] is set, which the head script does when motion is allowed; the
+ * script removes it after 3.5 s if the GSAP module never reports ready (failsafe).
+ */
+
+/* Native cross-document view transitions: a short crossfade, header held in place. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.22s;
+  }
+}
+
+/* Scroll reveals: rise and fade. */
+html[data-motion='on'] [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+/*
+ * Screed reveal: a board the colour of the section sweeps off the content to the right,
+ * like a screed leveling wet concrete. Pure transform (scaleX) on an overlay, so the
+ * content underneath (including the hero image and LCP) is never clipped or delayed.
+ */
+.screed {
+  position: relative;
+  display: block;
+}
+
+.screed__board {
+  position: absolute;
+  inset: -2px;
+  z-index: var(--layer-raised);
+  background: var(--screed-color, var(--color-chalk));
+  transform-origin: right center;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* The leading edge of the board: a thin alpenglow line, the light catching the screed. */
+.screed__board::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--color-alpenglow);
+}
+
+html[data-motion='on'] .screed__board {
+  transform: scaleX(1);
+}
+
+/* Marquee keyframes (review track); the component pauses it on hover and focus. */
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/*
+ * Above-the-fold screed (hero headline): pure CSS, so the headline never waits for the GSAP
+ * chunk. The board starts covering and sweeps off right after first paint.
+ */
+@keyframes screed-off {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+html[data-motion='on'] .screed--load .screed__board {
+  animation: screed-off 1.1s var(--ease-screed) 0.2s both;
+}

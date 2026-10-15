@@ -1,0 +1,222 @@
+/* Shared primitives: buttons, links, control joints, chips. Component-specific styles live in
+   each component's scoped <style>. */
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.5rem;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-slab);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    box-shadow 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.btn svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+}
+
+/* Alpenglow is the one action colour. Granite text: 4.8:1 on the accent. */
+.btn-primary {
+  background: var(--color-alpenglow);
+  color: var(--color-granite);
+  box-shadow: 0 10px 24px -14px rgb(168 64 27 / 0.75);
+}
+
+.btn-primary:hover {
+  background: var(--color-alpenglow-lit);
+  box-shadow: 0 14px 30px -14px rgb(168 64 27 / 0.85);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: rgb(23 28 31 / 0.55);
+  color: var(--color-ink);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-ink);
+  background: rgb(23 28 31 / 0.05);
+}
+
+.on-dark .btn-outline,
+.btn-outline.is-on-dark {
+  border-color: rgb(242 242 239 / 0.5);
+  color: var(--color-on-dark);
+}
+
+.on-dark .btn-outline:hover,
+.btn-outline.is-on-dark:hover {
+  border-color: var(--color-on-dark);
+  background: rgb(242 242 239 / 0.08);
+}
+
+.btn-compact {
+  min-height: 2.75rem;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.9375rem;
+}
+
+/* ---------- Links ---------- */
+
+.text-link {
+  color: var(--color-alpenglow-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: rgb(168 64 27 / 0.35);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 0.2s;
+}
+
+.text-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.on-dark .text-link {
+  color: var(--color-alpenglow-lit);
+  text-decoration-color: rgb(236 127 82 / 0.4);
+}
+
+/* Arrow link: label plus an arrow that slides on hover. */
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+
+.arrow-link svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-alpenglow-ink);
+  transition: transform 0.35s var(--ease-out);
+}
+
+.on-dark .arrow-link svg {
+  color: var(--color-alpenglow-lit);
+}
+
+.arrow-link:hover svg {
+  transform: translateX(4px);
+}
+
+.arrow-link span {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.2s;
+}
+
+.arrow-link:hover span {
+  text-decoration-color: currentColor;
+}
+
+/* ---------- Control joints ---------- */
+
+/* A saw-cut hairline: section dividers and grid gutters, the language of finished slabs. */
+.joint-top {
+  border-top: var(--joint);
+}
+
+.joint-bottom {
+  border-bottom: var(--joint);
+}
+
+.on-dark .joint-top,
+.on-dark.joint-top {
+  border-top: var(--joint-on-dark);
+}
+
+.on-dark .joint-bottom {
+  border-bottom: var(--joint-on-dark);
+}
+
+/* ---------- Chips (filters, in-page nav) ---------- */
+
+.chip {
+  /* Containing block for visually hidden text, so it stays clipped inside chip scrollers. */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid rgb(23 28 31 / 0.22);
+  border-radius: var(--radius-slab);
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--color-ink);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--color-granite);
+  border-color: var(--color-granite);
+  color: var(--color-on-dark);
+}
+
+.chip__count {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-muted);
+}
+
+.chip[aria-pressed='true'] .chip__count {
+  color: var(--color-on-dark-muted);
+}
+
+/* ---------- Stars ---------- */
+
+/* Ratings use pine, the sparing secondary, so alpenglow stays reserved for actions. */
+.stars {
+  display: inline-flex;
+  gap: 0.125rem;
+  color: var(--color-pine);
+}
+
+.on-dark .stars {
+  color: var(--color-pine-lit);
+}
+
+.stars svg {
+  width: 1rem;
+  height: 1rem;
+}

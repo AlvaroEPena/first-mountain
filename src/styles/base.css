@@ -1,0 +1,210 @@
+/* Element defaults and the layout primitives every page uses. */
+
+html {
+  background: var(--color-chalk);
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-chalk);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+/* Fine cured-concrete grain. Fixed and inert so it never repaints while scrolling. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-skip);
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* The <picture> wrapper must not become a layout box around <img>. */
+picture {
+  display: contents;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: var(--display-stretch);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h3,
+h4 {
+  font-weight: 700;
+  font-stretch: 108%;
+  letter-spacing: -0.01em;
+}
+
+p,
+ul,
+ol,
+blockquote,
+figure,
+dl,
+dd {
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--color-alpenglow);
+  color: var(--color-granite);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-alpenglow-ink);
+  outline-offset: 3px;
+  border-radius: var(--radius-field);
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--color-alpenglow-lit);
+}
+
+/* ---------- Layout ---------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.surface-cured {
+  background: var(--color-cured);
+}
+
+/* Granite anchor sections carry the topo contours (place, without a mountain cliche). */
+.on-dark {
+  background-color: var(--color-granite);
+  color: var(--color-on-dark);
+}
+
+.topo {
+  background-image: url('../assets/brand/topo-on-dark.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+.topo-light {
+  background-image: url('../assets/brand/topo-on-light.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* ---------- Type helpers ---------- */
+
+.text-hero,
+.text-h1,
+.text-h2 {
+  text-wrap: balance;
+}
+
+.lead {
+  font-size: var(--text-lead);
+  line-height: var(--text-lead--line-height);
+  color: var(--color-ink-muted);
+  max-width: 60ch;
+}
+
+.on-dark .lead {
+  color: var(--color-on-dark-muted);
+}
+
+.measure {
+  max-width: 65ch;
+}
+
+/* Small uppercase label. Rationed: at most one per three sections (see DESIGN.md). */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-alpenglow-ink);
+}
+
+.on-dark .eyebrow {
+  color: var(--color-alpenglow-lit);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: var(--layer-skip);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-slab);
+  background: var(--color-granite);
+  color: var(--color-on-dark);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}

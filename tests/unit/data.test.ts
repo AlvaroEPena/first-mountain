@@ -36,10 +36,17 @@ describe('gallery manifest', () => {
   });
 });
 
-describe('committed photos', () => {
-  it('carry no EXIF, GPS, XMP or IPTC metadata', async () => {
-    for (const file of photoFiles) {
-      const meta = await sharp(path.join(PHOTO_DIR, file)).metadata();
+const PUBLIC_DIR = path.resolve('public');
+const publicImages = readdirSync(PUBLIC_DIR)
+  .filter((file) => /.(?:jpe?g|png|webp|avif)$/i.test(file))
+  .map((file) => path.join(PUBLIC_DIR, file));
+
+describe('committed images', () => {
+  it('carry no EXIF, GPS, XMP or IPTC metadata (photos, OG image and icons)', async () => {
+    const files = [...photoFiles.map((file) => path.join(PHOTO_DIR, file)), ...publicImages];
+    expect(publicImages.length).toBeGreaterThan(0);
+    for (const file of files) {
+      const meta = await sharp(file).metadata();
       expect({ file, exif: meta.exif, xmp: meta.xmp, iptc: meta.iptc }).toEqual({
         file,
         exif: undefined,

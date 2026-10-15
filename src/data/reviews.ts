@@ -9,9 +9,7 @@ import type { ServiceId } from './service-ids';
 
 export interface Review {
   id: string;
-  /** Full name as shown on Google. */
-  author: string;
-  /** Public display: first name and last initial. */
+  /** Public display: first name and last initial (full names stay in docs/google-reviews.md). */
   displayName: string;
   rating: 1 | 2 | 3 | 4 | 5;
   /** Approximate year, derived from Google's relative date at capture. */
@@ -31,7 +29,6 @@ export const reviewsCapturedOn = '2026-10-14';
 export const reviews: readonly Review[] = [
   {
     id: 'r00',
-    author: 'Scott Richards',
     displayName: 'Scott R.',
     rating: 5,
     approxYear: 2026,
@@ -42,7 +39,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r01',
-    author: 'Doug Farnsworth',
     displayName: 'Doug F.',
     rating: 5,
     approxYear: 2026,
@@ -53,7 +49,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r02',
-    author: 'Robert Bardago',
     displayName: 'Robert B.',
     rating: 5,
     approxYear: 2026,
@@ -64,7 +59,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r03',
-    author: 'Jonathan Baker',
     displayName: 'Jonathan B.',
     rating: 5,
     approxYear: 2025,
@@ -75,7 +69,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r04',
-    author: 'Mike Malais',
     displayName: 'Mike M.',
     rating: 5,
     approxYear: 2026,
@@ -87,7 +80,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r05',
-    author: 'Dan Duffin',
     displayName: 'Dan D.',
     rating: 5,
     approxYear: 2026,
@@ -98,7 +90,6 @@ export const reviews: readonly Review[] = [
   },
   {
     id: 'r06',
-    author: 'Parrish “Forrest” Canyon',
     displayName: 'Parrish C.',
     rating: 5,
     approxYear: 2024,
@@ -111,7 +102,6 @@ Update: Well here we are three years later and the driveway porch and pad are am
   },
   {
     id: 'r07',
-    author: 'Noah Zemke',
     displayName: 'Noah Z.',
     rating: 5,
     approxYear: 2025,
@@ -124,7 +114,6 @@ Update: First Mountain and Frank came back out and poured an add on to our drive
   },
   {
     id: 'r08',
-    author: 'Karl Bergmann',
     displayName: 'Karl B.',
     rating: 5,
     approxYear: 2023,
@@ -135,7 +124,6 @@ Update: First Mountain and Frank came back out and poured an add on to our drive
   },
   {
     id: 'r09',
-    author: 'Greg Schenk',
     displayName: 'Greg S.',
     rating: 5,
     approxYear: 2021,
@@ -150,7 +138,6 @@ We are super happy with the finished project and Frank is a great guy so happy t
   },
   {
     id: 'r10',
-    author: 'Brian Sneddon',
     displayName: 'Brian S.',
     rating: 5,
     approxYear: 2025,
@@ -161,7 +148,6 @@ We are super happy with the finished project and Frank is a great guy so happy t
   },
   {
     id: 'r11',
-    author: 'Harold Saunders',
     displayName: 'Harold S.',
     rating: 5,
     approxYear: 2026,
@@ -171,7 +157,6 @@ We are super happy with the finished project and Frank is a great guy so happy t
   },
   {
     id: 'r12',
-    author: 'Benjamin Zaring',
     displayName: 'Benjamin Z.',
     rating: 5,
     approxYear: 2025,
@@ -184,7 +169,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r13',
-    author: 'Corey Fuhriman',
     displayName: 'Corey F.',
     rating: 5,
     approxYear: 2025,
@@ -195,7 +179,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r14',
-    author: 'Michelle Smallhorn',
     displayName: 'Michelle S.',
     rating: 5,
     approxYear: 2022,
@@ -206,7 +189,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r15',
-    author: 'Brian Mierkey',
     displayName: 'Brian M.',
     rating: 5,
     approxYear: 2026,
@@ -217,7 +199,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r16',
-    author: 'Jacob Black',
     displayName: 'Jacob B.',
     rating: 5,
     approxYear: 2025,
@@ -229,7 +210,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r17',
-    author: 'Brandi Bridges',
     displayName: 'Brandi B.',
     rating: 5,
     approxYear: 2025,
@@ -240,7 +220,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r18',
-    author: 'Brittany Chapman Nash',
     displayName: 'Brittany N.',
     rating: 5,
     approxYear: 2025,
@@ -251,7 +230,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r19',
-    author: 'Jason Chandler',
     displayName: 'Jason C.',
     rating: 5,
     approxYear: 2024,
@@ -262,7 +240,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r21',
-    author: 'Manil Sieng',
     displayName: 'Manil S.',
     rating: 5,
     approxYear: 2025,
@@ -273,7 +250,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r22',
-    author: 'Rodmehr Semnani',
     displayName: 'Rodmehr S.',
     rating: 5,
     approxYear: 2025,
@@ -284,7 +260,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r23',
-    author: 'Tiffany Aragon',
     displayName: 'Tiffany A.',
     rating: 5,
     approxYear: 2025,
@@ -295,7 +270,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r24',
-    author: 'Rachel M',
     displayName: 'Rachel M.',
     rating: 5,
     approxYear: 2021,
@@ -306,7 +280,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r26',
-    author: 'Brett Bertagnolli',
     displayName: 'Brett B.',
     rating: 5,
     approxYear: 2023,
@@ -317,7 +290,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r27',
-    author: 'Michael Olsen',
     displayName: 'Michael O.',
     rating: 4,
     approxYear: 2026,
@@ -328,7 +300,6 @@ What truly stood out was the extra effort they put in. Not only did they complet
   },
   {
     id: 'r28',
-    author: 'Gavin Robertson',
     displayName: 'Gavin R.',
     rating: 5,
     approxYear: 2026,

@@ -101,15 +101,15 @@ test.describe('J5 quote form', () => {
     expect(sent, 'demo mode must not send the form anywhere').toEqual([]);
   });
 
-  test('a filled honeypot looks like success but sends nothing', async ({ page }) => {
+  test('a filled honeypot in demo mode shows the demo note and sends nothing', async ({ page }) => {
     const sent = trackOutgoingData(page);
-    await page.locator('#quote-website').evaluate((input: HTMLInputElement) => {
+    await page.locator('#quote-hp').evaluate((input: HTMLInputElement) => {
       input.value = 'https://spam.example';
     });
     await submitButton(page).click();
 
     const done = page.getByRole('status').filter({ has: page.getByRole('heading') });
-    await expect(done.getByRole('heading')).toHaveText('Thanks, we have your request.');
+    await expect(done.getByRole('heading')).toContainText('this preview does not send it');
     expect(sent).toEqual([]);
   });
 });

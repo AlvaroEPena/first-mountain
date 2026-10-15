@@ -56,7 +56,7 @@ export const quoteRequestSchema = z.object({
     .min(10, 'Tell us a little about the project (10+ characters)')
     .max(2000, 'Keep it under 2000 characters'),
   /** Honeypot: real visitors never fill this. Whitespace counts as empty (the only rule). */
-  website: z.string().trim().max(0).optional(),
+  hp_check: z.string().trim().max(0).optional(),
 });
 
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;

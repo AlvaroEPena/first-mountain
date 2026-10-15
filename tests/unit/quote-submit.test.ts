@@ -11,15 +11,16 @@ const request: QuoteRequest = {
   projectType: 'driveway',
   timeframe: 'flexible',
   message: 'Replace a cracked two-car driveway.',
-  website: '',
+  hp_check: '',
 };
 
 const respond = (status: number, body: unknown) =>
   vi.fn(async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch;
 
-const formWith = (website: string) => {
+const formWith = (hpCheck: string) => {
   const form = new FormData();
-  for (const [key, value] of Object.entries({ ...request, website })) form.set(key, value);
+  for (const [key, value] of Object.entries({ ...request, hp_check: hpCheck }))
+    form.set(key, value);
   return form;
 };
 
@@ -38,7 +39,7 @@ describe('honeypot (schema rule only)', () => {
 
 describe('visibleErrors', () => {
   it('keeps only fields the form shows', () => {
-    expect(visibleErrors({ phone: 'Bad phone', website: 'Must be empty' })).toEqual({
+    expect(visibleErrors({ phone: 'Bad phone', hp_check: 'Must be empty' })).toEqual({
       phone: 'Bad phone',
     });
     expect(visibleErrors(undefined)).toEqual({});
@@ -78,7 +79,7 @@ describe('submitQuote', () => {
   });
 
   it('fails when a rejection only names fields the visitor cannot see', async () => {
-    const send = respond(422, { ok: false, errors: { website: 'Must be empty' } });
+    const send = respond(422, { ok: false, errors: { hp_check: 'Must be empty' } });
     expect(await submitQuote(request, '/api/quote', send)).toEqual({ kind: 'failed' });
   });
 

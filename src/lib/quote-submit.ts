@@ -23,11 +23,11 @@ export type SubmitOutcome =
   | { kind: 'failed' };
 
 /**
- * The honeypot rule lives in the shared schema (`website` must be empty once trimmed). A
+ * The honeypot rule lives in the shared schema (`hp_check` must be empty once trimmed). A
  * submission whose only use of that field is an error came from a bot.
  */
 export function isBotSubmission(errors: QuoteFieldErrors): boolean {
-  return Boolean(errors.website);
+  return Boolean(errors.hp_check);
 }
 
 /** Keep only errors the form can show next to a field. */

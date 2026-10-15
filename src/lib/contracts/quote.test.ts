@@ -25,7 +25,7 @@ describe('quoteRequestSchema', () => {
       email: '',
       address: '',
       timeframe: '',
-      website: '',
+      hp_check: '',
     });
     expect(result.success).toBe(true);
   });
@@ -49,7 +49,7 @@ describe('quoteRequestSchema', () => {
   });
 
   it('rejects a filled honeypot', () => {
-    expect(quoteRequestSchema.safeParse({ ...valid, website: 'http://spam' }).success).toBe(false);
+    expect(quoteRequestSchema.safeParse({ ...valid, hp_check: 'http://spam' }).success).toBe(false);
   });
 
   it('reports one message per invalid field', () => {
@@ -98,8 +98,8 @@ describe('parseQuoteResponse', () => {
 
 describe('honeypot', () => {
   it('treats whitespace as empty and anything else as a bot', () => {
-    expect(quoteRequestSchema.safeParse({ ...valid, website: '   ' }).success).toBe(true);
-    expect(quoteRequestSchema.safeParse({ ...valid, website: 'x' }).success).toBe(false);
+    expect(quoteRequestSchema.safeParse({ ...valid, hp_check: '   ' }).success).toBe(true);
+    expect(quoteRequestSchema.safeParse({ ...valid, hp_check: 'x' }).success).toBe(false);
   });
 });
 

@@ -100,9 +100,10 @@ function setup(target: HTMLFormElement): void {
     const data = new FormData(target);
 
     const parsed = parseQuoteForm(data);
-    // Bots fill the hidden field (the schema's honeypot rule): pretend success, send nothing.
+    // Bots fill the hidden field (the schema's honeypot rule): pretend success (the demo note in
+    // demo mode, never a fake "sent"), send nothing.
     if (!parsed.ok && isBotSubmission(parsed.errors)) {
-      showDone('sent');
+      showDone(endpoint ? 'sent' : 'demo');
       return;
     }
     if (!parsed.ok) {

@@ -90,7 +90,7 @@ const screedSurface = isDark ? 'granite' : surface;
   </div>
 
   {layout === 'gallery' && service.photos.length > 0 && (
-    <ul class="shell svc__photos" data-count={service.photos.length}>
+    <ul class="shell svc__photos" data-photos={service.photos.length}>
       {service.photos.map((id) => (
         <li>
           <Screed surface={screedSurface}>
@@ -219,24 +219,24 @@ const screedSurface = isDark ? 'granite' : surface;
       order: 2;
     }
     /* Lead photo takes a 2 x 2 block; the rest fill the remaining cells exactly. */
-    .svc__photos[data-count='3'] {
+    .svc__photos[data-photos='3'] {
       grid-template-columns: 2fr 1fr;
     }
-    .svc__photos[data-count='4'] {
+    .svc__photos[data-photos='4'] {
       grid-template-columns: repeat(4, 1fr);
     }
     .svc__photos li:first-child {
       grid-row: span 2;
     }
-    .svc__photos[data-count='4'] li:first-child,
-    .svc__photos[data-count='4'] li:nth-child(2) {
+    .svc__photos[data-photos='4'] li:first-child,
+    .svc__photos[data-photos='4'] li:nth-child(2) {
       grid-column: span 2;
     }
     .svc__photos li:first-child :global(.screed) {
       aspect-ratio: auto;
       height: 100%;
     }
-    .svc__photos[data-count='4'] li:nth-child(2) :global(.screed) {
+    .svc__photos[data-photos='4'] li:nth-child(2) :global(.screed) {
       aspect-ratio: 2 / 1;
     }
     .svc--gallery .svc__evidence {

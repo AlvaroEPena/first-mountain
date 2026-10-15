@@ -47,6 +47,7 @@
 - User approved the spec as presented (stack, scope, design).
 
 ### 2026-10-14 — 4-scaffolded
+
 - Done: create-astro minimal (temp folder, moved in), deps installed (versions per research),
   configs from zydeco (eslint, prettier, vitest, tsconfig, wrangler, _headers with Maps frame-src),
   `images:prepare` (46 photos at 2400px, 34 MB, no metadata), contract `src/lib/contracts/quote.ts`,

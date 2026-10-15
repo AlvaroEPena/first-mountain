@@ -1,0 +1,27 @@
+---
+import { STAR_PATH } from './icons';
+
+interface Props {
+  /** Whole stars to fill (1 to 5). */
+  rating: number;
+  /** Accessible label; the stars themselves are decorative. */
+  label?: string;
+}
+
+const { rating, label = `${rating} out of 5 stars` } = Astro.props;
+const filled = Math.round(rating);
+---
+
+<span class="stars" role="img" aria-label={label}>
+  {Array.from({ length: 5 }, (_, index) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d={STAR_PATH}
+        fill={index < filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+      />
+    </svg>
+  ))}
+</span>

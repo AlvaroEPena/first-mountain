@@ -1,16 +1,28 @@
 ---
+import AreaHours from '../components/home/AreaHours.astro';
+import Hero from '../components/home/Hero.astro';
+import ProcessSteps from '../components/home/ProcessSteps.astro';
+import ProjectStrip from '../components/home/ProjectStrip.astro';
+import ProofStrip from '../components/home/ProofStrip.astro';
+import ReviewTrack from '../components/home/ReviewTrack.astro';
+import ServiceBento from '../components/home/ServiceBento.astro';
+import CtaBand from '../components/layout/CtaBand.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <h1>Astro</h1>
-  </body>
-</html>
+<BaseLayout
+  title={`${site.name} | Concrete and hardscape in ${site.address.city}`}
+  description={`Family-owned concrete contractor in ${site.address.city}: driveways, patios, sport courts, steps, retaining walls and hardscape. Rated ${site.rating.value} on Google. Free estimates.`}
+  headerMode="overlay"
+  closingSurface="cured"
+>
+  <Hero />
+  <ProofStrip />
+  <ServiceBento />
+  <ProjectStrip />
+  <ProcessSteps />
+  <ReviewTrack />
+  <AreaHours />
+  <CtaBand slot="closing" />
+</BaseLayout>

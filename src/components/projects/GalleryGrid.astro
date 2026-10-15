@@ -1,0 +1,106 @@
+---
+import { getImage } from 'astro:assets';
+
+import { gallery, photo } from '../../data/gallery';
+import Photo from '../ui/Photo.astro';
+
+/** Lightbox renditions (AVIF). Never wider than the source: low-res photos stay native size. */
+const LIGHTBOX_WIDTHS = [1200, 1800, 2400];
+
+const entries = await Promise.all(
+  gallery.map(async (item) => {
+    const source = photo(item.id);
+    const widths = [...new Set(LIGHTBOX_WIDTHS.map((w) => Math.min(w, source.width)))];
+    const renditions = await Promise.all(
+      widths.map((width) => getImage({ src: source, width, format: 'avif' })),
+    );
+    const largest = renditions[renditions.length - 1];
+    if (!largest) throw new Error(`No lightbox rendition for ${item.id}`);
+    const largestWidth = widths[widths.length - 1] ?? source.width;
+    return {
+      item,
+      href: largest.src,
+      srcset: renditions.map((image, i) => `${image.src} ${widths[i]}w`).join(', '),
+      width: largestWidth,
+      height: Math.round((largestWidth * source.height) / source.width),
+    };
+  }),
+);
+---
+
+<ul class="gallery" data-gallery-grid>
+  {entries.map(({ item, href, srcset, width, height }) => (
+    <li class="gallery__item" data-category={item.category}>
+      <a
+        href={href}
+        class="gallery__link"
+        data-pswp-width={width}
+        data-pswp-height={height}
+        data-pswp-srcset={srcset}
+      >
+        <Photo
+          id={item.id}
+          widths={[320, 480, 720]}
+          sizes="(min-width: 90rem) 22rem, (min-width: 64rem) 31vw, 50vw"
+        />
+        <span class="visually-hidden"> (opens larger view)</span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  /* Uniform crops, 4px saw-cut gutters. DOM order is visual order, so filtering and focus agree. */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .gallery__item {
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: var(--color-cured);
+  }
+  .gallery__link {
+    display: block;
+    height: 100%;
+    cursor: zoom-in;
+  }
+  .gallery__link:focus-visible {
+    outline-offset: -4px;
+  }
+  .gallery__item :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .gallery__link:hover :global(img),
+  .gallery__link:focus-visible :global(img) {
+    transform: scale(1.04);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gallery__item {
+      animation: tile-in 0.45s var(--ease-out) both;
+    }
+  }
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+  }
+  @media (min-width: 64rem) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 90rem) {
+    .gallery {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

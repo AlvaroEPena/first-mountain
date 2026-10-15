@@ -1,0 +1,152 @@
+---
+import { Font } from 'astro:assets';
+
+import Footer from '../components/layout/Footer.astro';
+import Header from '../components/layout/Header.astro';
+import JsonLd from '../components/layout/JsonLd.astro';
+import MobileActionBar from '../components/layout/MobileActionBar.astro';
+import MobileMenu from '../components/layout/MobileMenu.astro';
+import RidgeEdge from '../components/layout/RidgeEdge.astro';
+import { services } from '../data/services';
+import { site } from '../data/site';
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  businessJsonLd,
+  canonicalPath,
+  type Crumb,
+} from '../lib/seo';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Breadcrumb trail after Home (e.g. [{ name: 'Services', path: '/services' }]). */
+  crumbs?: readonly Crumb[];
+  /** Extra JSON-LD for this page (the business is always included). */
+  structuredData?: Record<string, unknown>[];
+  /** Open Graph image path, relative to the site root. */
+  image?: string;
+  /** Home starts with the header over the hero photo. */
+  headerMode?: 'overlay' | 'solid';
+  /** Surface of the last section, so the ridgeline edge blends into it. */
+  closingSurface?: 'chalk' | 'cured';
+  /** Preview deploys stay out of search engines; flip at launch. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  crumbs = [],
+  structuredData = [],
+  image = '/og.jpg',
+  headerMode = 'solid',
+  closingSurface = 'chalk',
+  noindex = true,
+} = Astro.props;
+
+const origin = (Astro.site ?? new URL(site.url)).toString();
+const canonical = absoluteUrl(canonicalPath(Astro.url.pathname), origin);
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+const ogImage = absoluteUrl(image, origin);
+const breadcrumbs =
+  crumbs.length > 0 ? [breadcrumbJsonLd([{ name: 'Home', path: '/' }, ...crumbs], origin)] : [];
+---
+
+<!doctype html>
+<html lang="en" data-header={headerMode}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#171C1F" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32 48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} logo over a crew pouring a slab`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <Font cssVariable="--face-display" preload />
+    <Font cssVariable="--face-text" preload />
+
+    <!-- Motion is opt-in: hidden start states only apply once this runs and motion is allowed. -->
+    <script is:inline>
+      (function () {
+        const root = document.documentElement;
+        if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        root.setAttribute('data-motion', 'on');
+        // Arrived through a cross-document view transition: let motion wait for it to finish.
+        window.addEventListener('pagereveal', function (event) {
+          // An aborted transition rejects 'finished'; swallow it so it never surfaces as an error.
+          if (event.viewTransition) {
+            window.__fmRevealed = event.viewTransition.finished.catch(function () {});
+          }
+        });
+        // Failsafe: if the motion module never reports ready, show everything.
+        setTimeout(function () {
+          if (!root.hasAttribute('data-motion-ready')) root.removeAttribute('data-motion');
+        }, 3500);
+      })();
+    </script>
+    <JsonLd data={[businessJsonLd(origin, services), ...breadcrumbs, ...structuredData]} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Header mode={headerMode} />
+    <MobileMenu />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <div class="closing" data-surface={closingSurface}>
+      <RidgeEdge />
+      <div class="closing__body on-dark topo">
+        <slot name="closing" />
+        <Footer />
+      </div>
+    </div>
+    <MobileActionBar />
+    <script>
+      import '../scripts/nav';
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>
+
+<style>
+  main {
+    display: block;
+    outline: none;
+  }
+  html[data-header='solid'] main {
+    padding-top: var(--header-h);
+  }
+  /* The ridge sits on the surface of the last section, then the granite block begins. */
+  .closing[data-surface='cured'] {
+    background: var(--color-cured);
+  }
+  @media (max-width: 47.99rem) {
+    .closing__body {
+      padding-bottom: calc(var(--action-bar-h) + env(safe-area-inset-bottom));
+    }
+  }
+</style>

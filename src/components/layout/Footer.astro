@@ -1,0 +1,184 @@
+---
+import { cityLine } from '../../lib/address';
+import { primaryNav } from '../../lib/content/navigation';
+import { services } from '../../data/services';
+import { site } from '../../data/site';
+import { ratingSentence } from '../../lib/rating';
+import Icon from '../ui/Icon.astro';
+import Logo from '../ui/Logo.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="shell footer__grid">
+    <div class="footer__brand">
+      <Logo tone="onDark" class="footer__logo" />
+      <p class="footer__line">
+        Family-owned concrete and hardscape in {site.address.city}, run by {site.owner}.
+      </p>
+      <a class="footer__phone" href={site.phoneHref}>
+        <Icon name="phone" />
+        {site.phone}
+      </a>
+    </div>
+
+    <nav class="footer__col" aria-label="Site">
+      <h2 class="footer__heading">Site</h2>
+      <ul>
+        <li>
+          <a href="/">Home</a>
+        </li>
+        {primaryNav.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer__col" aria-label="Services">
+      <h2 class="footer__heading">Services</h2>
+      <ul>
+        {services.map((service) => (
+          <li>
+            <a href={`/services#${service.id}`}>{service.name}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="footer__col">
+      <h2 class="footer__heading">Find us</h2>
+      <address>
+        {site.address.street}
+        <br />
+        {cityLine(site.address)}
+      </address>
+      <p class="footer__hours">{site.hoursText}</p>
+      <a class="footer__link" href={site.links.googleReviews} rel="noopener" target="_blank">
+        {ratingSentence(site.rating)}
+        <Icon name="external" />
+        <span class="visually-hidden"> (opens Google Maps in a new tab)</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="shell footer__base joint-top">
+    <p>
+      &copy; {year} {site.legalName}
+    </p>
+    <p>Photos and reviews from our Google Business Profile.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: clamp(3rem, 2rem + 4vw, 5rem) 1.5rem;
+    font-size: 0.9375rem;
+  }
+  .footer__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .footer__brand {
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+    justify-items: start;
+    max-width: 26rem;
+  }
+  .footer :global(.footer__logo) {
+    width: min(100%, 20rem);
+    height: auto;
+  }
+  .footer__line {
+    color: var(--color-on-dark-muted);
+  }
+  .footer__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    font-family: var(--font-display);
+    font-stretch: var(--display-stretch);
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .footer__phone :global(svg) {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-alpenglow-lit);
+  }
+  .footer__heading {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-sans);
+    font-stretch: normal;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-on-dark-muted);
+  }
+  .footer__col ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .footer__col li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  .footer__col li a:hover,
+  .footer__link:hover {
+    color: var(--color-alpenglow-lit);
+  }
+  address {
+    font-style: normal;
+    line-height: 1.7;
+  }
+  .footer__hours {
+    margin-top: 0.75rem;
+    color: var(--color-on-dark-muted);
+  }
+  .footer__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    margin-top: 0.5rem;
+    text-decoration: underline;
+    text-decoration-color: rgb(242 242 239 / 0.35);
+    text-underline-offset: 0.25em;
+  }
+  .footer__link :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    color: var(--color-on-dark-muted);
+    font-size: 0.875rem;
+  }
+  @media (min-width: 48rem) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 64rem) {
+    .footer__grid {
+      grid-template-columns: 1.5fr 0.8fr 1fr 1.1fr;
+      gap: 3rem;
+    }
+  }
+</style>

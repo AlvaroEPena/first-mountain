@@ -1,0 +1,44 @@
+---
+import CtaBand from '../components/layout/CtaBand.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import FilterBar from '../components/projects/FilterBar.astro';
+import GalleryGrid from '../components/projects/GalleryGrid.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { gallery } from '../data/gallery';
+import { site } from '../data/site';
+
+const crumbs = [{ name: 'Projects', path: '/projects' }];
+---
+
+<BaseLayout
+  title="Project photos"
+  description={`${gallery.length} photos of driveways, sport courts, patios, steps and hardscape poured by ${site.name} around ${site.address.city}.`}
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Real jobs, photographed on site"
+    lead={`${gallery.length} photos of our own work, from tear-out to the finished slab. Filter by type of work and tap any photo to see it larger.`}
+    crumbs={crumbs}
+  />
+  <section class="section projects" aria-label="Project photos">
+    <div class="shell">
+      <FilterBar />
+      <GalleryGrid />
+    </div>
+  </section>
+  <CtaBand
+    slot="closing"
+    title="Want one of these at your place?"
+    body="Tell Frank which one you have in mind. Estimates are free, and he usually comes out to see the spot."
+  />
+</BaseLayout>
+
+<script>
+  import '../scripts/gallery';
+</script>
+
+<style>
+  .projects {
+    padding-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+</style>

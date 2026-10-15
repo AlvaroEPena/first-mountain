@@ -1,0 +1,82 @@
+---
+import { GALLERY_CATEGORIES, GALLERY_CATEGORY_LABELS, gallery } from '../../data/gallery';
+import {
+  ALL_FILTER,
+  filterCounts,
+  resultMessage,
+  type GalleryFilter,
+} from '../../lib/gallery-filter';
+
+const counts = filterCounts(gallery);
+const filters: { value: GalleryFilter; label: string }[] = [
+  { value: ALL_FILTER, label: 'All' },
+  ...GALLERY_CATEGORIES.map((category) => ({
+    value: category,
+    label: GALLERY_CATEGORY_LABELS[category],
+  })),
+];
+---
+
+<!-- Hidden until the gallery script runs; without JS every photo is simply shown. -->
+<div class="filters" hidden data-filter-bar>
+  <div class="filters__buttons" role="group" aria-label="Filter photos by type of work">
+    {filters.map((filter) => (
+      <button
+        type="button"
+        class="chip"
+        data-filter={filter.value}
+        data-label={filter.label}
+        aria-pressed={filter.value === ALL_FILTER ? 'true' : 'false'}
+      >
+        {filter.label}
+        <span class="chip__count">
+          {` ${counts[filter.value]}`}
+          <span class="visually-hidden"> photos</span>
+        </span>
+      </button>
+    ))}
+  </div>
+  <p class="filters__status" role="status" aria-live="polite" data-filter-status>
+    {resultMessage(gallery.length, 'All', true)}
+  </p>
+</div>
+
+<style>
+  .filters {
+    /* minmax(0, 1fr) lets the chip row scroll instead of widening the page on phones. */
+    grid-template-columns: minmax(0, 1fr);
+    position: sticky;
+    top: var(--header-h);
+    z-index: var(--layer-raised);
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding-block: 0.75rem;
+    background: rgb(242 242 239 / 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--joint);
+  }
+  .filters__buttons {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters__buttons::-webkit-scrollbar {
+    display: none;
+  }
+  .filters__buttons :global(.chip) {
+    flex-shrink: 0;
+  }
+  .filters__status {
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 64rem) {
+    .filters__buttons {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import {
+  LOCKUP_VIEWBOX,
+  MARK_VIEWBOX,
+  WORDMARK_VIEWBOX,
+  renderLockup,
+  renderMark,
+  renderWordmark,
+} from '../../assets/brand/geometry.mjs';
+import { BRAND } from '../../assets/brand/palette.mjs';
+import { nextId } from '../../lib/unique-id';
+
+interface Props {
+  /** "lockup" is mark plus wordmark; "wordmark" is text only; "mark" is the peak on its slab. */
+  variant?: 'lockup' | 'wordmark' | 'mark';
+  /** Background the logo sits on. */
+  tone?: 'onLight' | 'onDark';
+  /** One-colour version (the peak takes the ink colour). */
+  mono?: boolean;
+  class?: string;
+  /** Set when the logo is the only content of a link, so it has an accessible name. */
+  label?: string;
+}
+
+const { variant = 'lockup', tone = 'onLight', mono = false, class: className, label } = Astro.props;
+
+// Unique per render so clip-path ids never collide when the logo appears twice on a page.
+const uid = nextId('fm');
+const colors = BRAND[tone];
+const markColors = mono ? { peak: colors.ink, slab: colors.ink } : colors;
+
+const { viewBox, markup } = {
+  lockup: { viewBox: LOCKUP_VIEWBOX, markup: renderLockup(uid, tone, { mono }) },
+  wordmark: { viewBox: WORDMARK_VIEWBOX, markup: renderWordmark(uid, colors) },
+  mark: { viewBox: MARK_VIEWBOX, markup: renderMark(markColors) },
+}[variant];
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={viewBox}
+  class={className}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+  set:html={markup}
+/>

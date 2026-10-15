@@ -1,0 +1,46 @@
+---
+import { services } from '../../data/services';
+---
+
+<!-- Sticky jump links to each service section; scrolls sideways on phones. -->
+<nav class="svc-nav" aria-label="Services on this page">
+  <ul class="shell">
+    {services.map((service) => (
+      <li>
+        <a class="chip" href={`#${service.id}`}>
+          {service.shortName}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .svc-nav {
+    position: sticky;
+    top: var(--header-h);
+    z-index: var(--layer-raised);
+    background: rgb(242 242 239 / 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--joint);
+  }
+  ul {
+    display: flex;
+    gap: 0.5rem;
+    margin-block: 0;
+    padding-block: 0.6rem;
+    overflow-x: auto;
+    list-style: none;
+    scrollbar-width: none;
+  }
+  ul::-webkit-scrollbar {
+    display: none;
+  }
+  li {
+    flex-shrink: 0;
+  }
+  .chip {
+    background: var(--color-chalk);
+  }
+</style>

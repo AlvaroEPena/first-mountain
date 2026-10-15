@@ -1,0 +1,85 @@
+---
+import { site } from '../../data/site';
+import { monthYear } from '../../lib/rating';
+import Icon from '../ui/Icon.astro';
+import Stars from '../ui/Stars.astro';
+
+interface Props {
+  /** "large" for the Reviews page hero, "compact" beside a section heading. */
+  size?: 'large' | 'compact';
+  /** Heading level id for aria-labelledby when the summary heads a region. */
+  id?: string;
+}
+
+const { size = 'compact', id } = Astro.props;
+const { value, count, capturedOn } = site.rating;
+---
+
+<div class:list={['rating', `rating--${size}`]} id={id}>
+  <p class="rating__value tabular" aria-hidden="true">
+    <span data-count={value} data-decimals="1">
+      {value.toFixed(1)}
+    </span>
+  </p>
+  <div class="rating__detail">
+    <Stars rating={value} label={`Rated ${value.toFixed(1)} out of 5`} />
+    <p class="rating__sentence">
+      <span class="visually-hidden">{`${value.toFixed(1)} `}</span>
+      from {count} Google reviews, as of {monthYear(capturedOn)}
+    </p>
+    <a
+      class="text-link rating__link"
+      href={site.links.googleReviews}
+      target="_blank"
+      rel="noopener"
+    >
+      Read all reviews on Google
+      <Icon name="external" />
+      <span class="visually-hidden"> (opens in a new tab)</span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .rating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+  .rating__value {
+    font-family: var(--font-display);
+    font-stretch: var(--display-stretch);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    font-size: 3.5rem;
+  }
+  .rating--large .rating__value {
+    font-size: clamp(5rem, 3rem + 8vw, 9rem);
+  }
+  .rating__detail {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .rating__sentence {
+    font-weight: 600;
+  }
+  .rating--large .rating__sentence {
+    font-size: var(--text-lead);
+  }
+  .rating__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+  }
+  .rating__link :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+  .rating--large :global(.stars svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+</style>

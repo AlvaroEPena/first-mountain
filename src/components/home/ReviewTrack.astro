@@ -1,0 +1,168 @@
+---
+import { reviews } from '../../data/reviews';
+import RatingSummary from '../reviews/RatingSummary.astro';
+import Icon from '../ui/Icon.astro';
+import Screed from '../ui/Screed.astro';
+
+/** Pull quotes only (each a verbatim slice of a full review on /reviews). */
+const highlights = reviews.filter((review) => review.highlight);
+---
+
+<section class="section track-section" aria-labelledby="reviews-title">
+  <div class="shell track__head">
+    <div class="track__intro">
+      <Screed>
+        <h2 id="reviews-title" class="text-h2">
+          What customers say
+        </h2>
+      </Screed>
+      <RatingSummary />
+    </div>
+    <a class="arrow-link" href="/reviews">
+      <span>Read every review</span>
+      <Icon name="arrow" />
+    </a>
+  </div>
+
+  <!-- One marquee on the page. It pauses on hover, on focus and with the button (WCAG 2.2.2),
+       and turns into a plain sideways scroller under reduced motion. -->
+  <div class="track" data-track>
+    <div class="track__viewport" tabindex="0" role="region" aria-label="Customer quotes">
+      <div class="track__rail">
+        {[0, 1].map((copy) => (
+          <ul class="track__list" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {highlights.map((review) => (
+              <li class="track__card">
+                <blockquote>
+                  <p>&ldquo;{review.highlight}&rdquo;</p>
+                  <footer>{review.displayName}</footer>
+                </blockquote>
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+    <div class="shell track__controls">
+      <button type="button" class="chip" data-track-toggle>
+        Pause quotes
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .track-section {
+    border-top: var(--joint);
+  }
+  .track__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .track__intro {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .track {
+    position: relative;
+  }
+  .track__controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  .track__viewport {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .track__viewport:focus-visible {
+    outline-offset: -3px;
+  }
+  .track__rail {
+    display: flex;
+    width: max-content;
+    animation: marquee 90s linear infinite;
+  }
+  .track:hover .track__rail,
+  .track:focus-within .track__rail,
+  .track[data-paused] .track__rail {
+    animation-play-state: paused;
+  }
+  .track__list {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0 0.75rem 0 0;
+    list-style: none;
+  }
+  .track__card {
+    display: flex;
+    width: min(78vw, 24rem);
+    padding: 1.5rem;
+    border-radius: var(--radius-slab);
+    background: var(--color-cured);
+    border: var(--joint);
+  }
+  .track__card:nth-child(3n + 2) {
+    background: var(--color-granite);
+    color: var(--color-on-dark);
+  }
+  blockquote {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+  blockquote p {
+    font-family: var(--font-display);
+    font-stretch: 105%;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  blockquote footer {
+    font-size: var(--text-small);
+    font-weight: 700;
+    color: var(--color-ink-muted);
+  }
+  .track__card:nth-child(3n + 2) footer {
+    color: var(--color-on-dark-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track__controls,
+    .track__list[aria-hidden='true'] {
+      display: none;
+    }
+    .track__rail {
+      animation: none;
+    }
+    .track__viewport {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      mask-image: none;
+    }
+    .track__list {
+      padding-inline: var(--gutter);
+    }
+    .track__card {
+      scroll-snap-align: start;
+    }
+  }
+</style>
+
+<script>
+  // Pause/resume for the quote marquee; state lives on the wrapper as a data attribute.
+  for (const track of document.querySelectorAll<HTMLElement>('[data-track]')) {
+    const toggle = track.querySelector<HTMLButtonElement>('[data-track-toggle]');
+    toggle?.addEventListener('click', () => {
+      const isPaused = track.toggleAttribute('data-paused');
+      toggle.textContent = isPaused ? 'Play quotes' : 'Pause quotes';
+    });
+  }
+</script>

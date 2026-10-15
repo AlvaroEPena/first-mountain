@@ -1,0 +1,246 @@
+---
+import { quoteHref, serviceEvidence, type Service } from '../../data/services';
+import Icon from '../ui/Icon.astro';
+import Photo from '../ui/Photo.astro';
+import Screed from '../ui/Screed.astro';
+
+/**
+ * One service. Three compositions rotate so eight sections never read as one repeated block:
+ * "gallery" (photo row under the copy), "split" (copy beside one tall photo) and "quote"
+ * (no honest photo: a large customer quote carries the visual weight on granite).
+ */
+interface Props {
+  service: Service;
+  layout: 'gallery' | 'split' | 'quote';
+  surface: 'chalk' | 'cured';
+  /** Put the evidence column first on wide screens (breaks up repeated splits). */
+  flip?: boolean;
+}
+
+const { service, layout, surface, flip = false } = Astro.props;
+const { featured, others } = serviceEvidence(service);
+const titleId = `${service.id}-title`;
+const isDark = layout === 'quote';
+const screedSurface = isDark ? 'granite' : surface;
+---
+
+<section
+  id={service.id}
+  class:list={[
+    'section',
+    'svc',
+    `svc--${layout}`,
+    { 'svc--flip': flip },
+    isDark ? 'on-dark topo' : surface === 'cured' ? 'surface-cured' : '',
+  ]}
+  aria-labelledby={titleId}
+>
+  <div class="shell svc__grid">
+    <div class="svc__copy">
+      <Screed surface={screedSurface}>
+        <h2 id={titleId} class="text-h2">
+          {service.name}
+        </h2>
+      </Screed>
+      <p class="lead">{service.summary}</p>
+      <div class="svc__included">
+        <h3>What's included</h3>
+        <ul>
+          {service.bullets.map((bullet) => (
+            <li>
+              <Icon name="check" />
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <a class="btn btn-primary" href={quoteHref(service.projectType)}>
+        Get a free estimate
+        <span class="visually-hidden">{` for ${service.name.toLowerCase()}`}</span>
+        <Icon name="arrow" />
+      </a>
+    </div>
+
+    <div class="svc__evidence">
+      {layout === 'split' && service.photos[0] && (
+        <Screed surface={screedSurface} class="svc__tall">
+          <Photo
+            id={service.photos[0]}
+            widths={[480, 800, 1100]}
+            sizes="(min-width: 64rem) 40vw, 100vw"
+          />
+        </Screed>
+      )}
+      <figure class="svc__quote" data-reveal>
+        <blockquote>
+          <p>&ldquo;{featured.highlight ?? featured.text}&rdquo;</p>
+        </blockquote>
+        <figcaption>
+          {featured.displayName}, Google review
+          {others.length > 0 && (
+            <span class="svc__more">
+              {' '}
+              and {others.length} more {others.length === 1 ? 'review mentions' : 'reviews mention'}{' '}
+              this work
+            </span>
+          )}
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+
+  {layout === 'gallery' && service.photos.length > 0 && (
+    <ul class="shell svc__photos" data-count={service.photos.length}>
+      {service.photos.map((id) => (
+        <li>
+          <Screed surface={screedSurface}>
+            <Photo
+              id={id}
+              widths={[400, 640, 900]}
+              sizes="(min-width: 64rem) 25vw, (min-width: 48rem) 50vw, 100vw"
+            />
+          </Screed>
+        </li>
+      ))}
+    </ul>
+  )}
+</section>
+
+<style>
+  .svc {
+    scroll-margin-top: calc(var(--header-h) + 3.5rem);
+  }
+  .svc + .svc {
+    border-top: var(--joint);
+  }
+  .svc__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .svc__copy {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+    justify-items: start;
+  }
+  .svc__included {
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  .svc__included h3 {
+    font-family: var(--font-sans);
+    font-stretch: normal;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .svc__included ul {
+    display: grid;
+    gap: 0.6rem;
+    padding: 0;
+    list-style: none;
+  }
+  .svc__included li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: baseline;
+  }
+  .svc__included li :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    transform: translateY(0.2em);
+    color: var(--color-pine);
+  }
+  .on-dark .svc__included li :global(svg) {
+    color: var(--color-pine-lit);
+  }
+  .svc__evidence {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+  .svc__evidence :global(.svc__tall) {
+    overflow: hidden;
+    border-radius: var(--radius-slab);
+    aspect-ratio: 4 / 5;
+  }
+  .svc__evidence :global(.svc__tall img),
+  .svc__photos :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .svc__quote {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--color-alpenglow);
+  }
+  .svc__quote p {
+    font-family: var(--font-display);
+    font-stretch: 105%;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .svc--quote .svc__quote p {
+    font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.5rem);
+    line-height: 1.2;
+  }
+  .svc__quote figcaption {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+  }
+  .on-dark .svc__quote figcaption {
+    color: var(--color-on-dark-muted);
+  }
+  .svc__photos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    list-style: none;
+  }
+  .svc__photos li :global(.screed) {
+    overflow: hidden;
+    background: var(--color-cured);
+    border-radius: var(--radius-slab);
+    aspect-ratio: 1;
+  }
+  @media (min-width: 64rem) {
+    .svc__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 1rem + 5vw, 7rem);
+    }
+    .svc--flip .svc__copy {
+      order: 2;
+    }
+    /* Lead photo takes a 2 x 2 block; the rest fill the remaining cells exactly. */
+    .svc__photos[data-count='3'] {
+      grid-template-columns: 2fr 1fr;
+    }
+    .svc__photos[data-count='4'] {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .svc__photos li:first-child {
+      grid-row: span 2;
+    }
+    .svc__photos[data-count='4'] li:first-child,
+    .svc__photos[data-count='4'] li:nth-child(2) {
+      grid-column: span 2;
+    }
+    .svc__photos li:first-child :global(.screed) {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+    .svc__photos[data-count='4'] li:nth-child(2) :global(.screed) {
+      aspect-ratio: 2 / 1;
+    }
+    .svc--gallery .svc__evidence {
+      align-content: end;
+    }
+  }
+</style>

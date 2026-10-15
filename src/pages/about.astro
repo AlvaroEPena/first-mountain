@@ -1,0 +1,168 @@
+---
+import ValueGrid from '../components/about/ValueGrid.astro';
+import CtaBand from '../components/layout/CtaBand.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import Photo from '../components/ui/Photo.astro';
+import Screed from '../components/ui/Screed.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { crewPhotos, partnerReviewId } from '../lib/content/about';
+import { reviews } from '../data/reviews';
+import { site } from '../data/site';
+
+const crumbs = [{ name: 'About', path: '/about' }];
+const partner = reviews.find((review) => review.id === partnerReviewId);
+if (!partner) throw new Error(`Unknown partner review ${partnerReviewId}`);
+const [leadPhoto, ...morePhotos] = crewPhotos;
+const firstName = site.owner.split(' ')[0];
+---
+
+<BaseLayout
+  title={`About ${site.owner} and the crew`}
+  description={`${site.name} is a family-owned concrete and hardscape company in ${site.address.city}, run by ${site.owner}, with ${site.yearsExperience} years in the trade.`}
+  crumbs={crumbs}
+  closingSurface="cured"
+>
+  <PageHero
+    title={`${site.owner} and the crew`}
+    lead={`${site.name} is family owned and run by ${firstName}, with ${site.yearsExperience} years in the concrete trade. When you call, you talk to ${firstName}, the person who bids the job.`}
+    crumbs={crumbs}
+  >
+    <Screed slot="aside" class="about__lead-photo">
+      <Photo id={leadPhoto} widths={[480, 800, 1200]} sizes="(min-width: 64rem) 42vw, 100vw" />
+    </Screed>
+  </PageHero>
+
+  <section class="section about-story" aria-labelledby="story-title">
+    <div class="shell about-story__grid">
+      <div class="about-story__copy">
+        <h2 id="story-title" class="text-h2">
+          One crew, start to finish.
+        </h2>
+        <p data-reveal>
+          {firstName} comes out to look at the ground, measure and talk it through before he gives
+          you a number. Then he and his crew tear out the old concrete, grade the base, set the
+          forms and rebar, pour, finish and clean up after.
+        </p>
+        <p data-reveal>
+          Homeowners hire us for driveways, patios, sport courts, steps and walls. Other contractors
+          hire {firstName} too, as their concrete subcontractor.
+        </p>
+      </div>
+      <ul class="about-story__photos">
+        {morePhotos.map((id) => (
+          <li>
+            <Screed>
+              <Photo id={id} widths={[360, 560, 800]} sizes="(min-width: 64rem) 22vw, 50vw" />
+            </Screed>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section partner on-dark topo" aria-labelledby="partner-title">
+    <figure class="shell partner__inner">
+      <h2 id="partner-title" class="visually-hidden">
+        What other contractors say
+      </h2>
+      <blockquote>
+        <p class="partner__quote">&ldquo;{partner.highlight}&rdquo;</p>
+        <p class="partner__context">{partner.text.split('. ')[0]}.</p>
+      </blockquote>
+      <figcaption>
+        <strong>{[partner.displayName, partner.attribution].filter(Boolean).join(', ')}</strong>
+        <span class="partner__source">Google review</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <ValueGrid />
+
+  <CtaBand slot="closing" />
+</BaseLayout>
+
+<style>
+  :global(.about__lead-photo) {
+    overflow: hidden;
+    border-radius: var(--radius-slab);
+    aspect-ratio: 4 / 5;
+    max-height: 34rem;
+  }
+  :global(.about__lead-photo img),
+  .about-story__photos :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about-story__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .about-story__copy {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+    max-width: 60ch;
+  }
+  .about-story__copy p {
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-muted);
+  }
+  .about-story__photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  .about-story__photos li:nth-child(2) {
+    margin-top: 3rem;
+  }
+  .about-story__photos :global(.screed) {
+    overflow: hidden;
+    border-radius: var(--radius-slab);
+    aspect-ratio: 3 / 4;
+  }
+  .partner__inner {
+    display: grid;
+    gap: 2rem;
+    margin-block: 0;
+  }
+  .partner__quote {
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-stretch: var(--display-stretch);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .partner__context {
+    max-width: 60ch;
+    margin-top: 1.5rem;
+    font-size: var(--text-lead);
+    color: var(--color-on-dark-muted);
+  }
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.25rem;
+    padding-top: 1rem;
+    border-top: var(--joint-on-dark);
+    max-width: 30rem;
+  }
+  .partner__source {
+    flex-basis: 100%;
+    font-size: var(--text-small);
+    color: var(--color-on-dark-muted);
+  }
+  @media (min-width: 64rem) {
+    .about-story__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+  }
+</style>

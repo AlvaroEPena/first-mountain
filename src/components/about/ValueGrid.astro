@@ -1,0 +1,109 @@
+---
+import { values } from '../../lib/content/about';
+import { reviews } from '../../data/reviews';
+import Screed from '../ui/Screed.astro';
+
+const items = values.map((value) => {
+  const review = reviews.find((entry) => entry.id === value.reviewId);
+  if (!review) throw new Error(`Value "${value.title}" cites unknown review ${value.reviewId}`);
+  return { ...value, author: review.displayName };
+});
+---
+
+<section class="section values surface-cured" aria-labelledby="values-title">
+  <div class="shell">
+    <Screed surface="cured">
+      <h2 id="values-title" class="text-h2">
+        How we work
+      </h2>
+    </Screed>
+    <p class="lead values__lead" data-reveal>
+      Five habits our customers keep bringing up, in their words, not ours.
+    </p>
+    <!-- Five values, five cells: three across, then two wider, like slabs cut to fit. -->
+    <ul class="values__grid">
+      {items.map((value) => (
+        <li class="values__cell" data-reveal>
+          <h3>{value.title}</h3>
+          <p class="values__body">{value.body}</p>
+          <blockquote>
+            <p>&ldquo;{value.quote}&rdquo;</p>
+            <footer>{value.author}</footer>
+          </blockquote>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .values__lead {
+    margin-top: 1rem;
+  }
+  .values__grid {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    padding: 0;
+    list-style: none;
+  }
+  .values__cell {
+    display: grid;
+    gap: 0.85rem;
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+    border-radius: var(--radius-slab);
+    background: var(--color-chalk);
+    border: var(--joint);
+  }
+  .values__cell:nth-child(4) {
+    background-color: var(--color-granite);
+    background-image: url('../../assets/brand/topo-on-dark.svg');
+    background-size: 240% auto;
+    color: var(--color-on-dark);
+  }
+  .values__cell h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+  }
+  .values__body {
+    color: var(--color-ink-muted);
+  }
+  .values__cell:nth-child(4) .values__body,
+  .values__cell:nth-child(4) footer {
+    color: var(--color-on-dark-muted);
+  }
+  blockquote {
+    margin-top: 0.25rem;
+    padding-top: 0.85rem;
+    border-top: 2px solid var(--color-alpenglow);
+  }
+  blockquote p {
+    font-weight: 600;
+  }
+  blockquote footer {
+    margin-top: 0.35rem;
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 48rem) {
+    .values__grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .values__cell {
+      grid-column: span 3;
+    }
+    .values__cell:last-child {
+      grid-column: span 6;
+    }
+  }
+  @media (min-width: 64rem) {
+    .values__cell {
+      grid-column: span 2;
+    }
+    .values__cell:nth-child(n + 4),
+    .values__cell:last-child {
+      grid-column: span 3;
+    }
+  }
+</style>

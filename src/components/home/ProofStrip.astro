@@ -1,0 +1,120 @@
+---
+import { site } from '../../data/site';
+import { monthYear } from '../../lib/rating';
+
+const { value, count, capturedOn } = site.rating;
+
+interface Proof {
+  /** What a screen reader hears (the animated digits are hidden from it). */
+  label: string;
+  figure: string;
+  /** Count-up target; omitted for figures that are not numbers. */
+  countTo?: number;
+  decimals?: number;
+  caption: string;
+}
+
+const proofs: Proof[] = [
+  {
+    label: `${value.toFixed(1)} star average on Google`,
+    figure: value.toFixed(1),
+    countTo: value,
+    decimals: 1,
+    caption: `Average Google rating, as of ${monthYear(capturedOn)}`,
+  },
+  {
+    label: `${count} Google reviews`,
+    figure: String(count),
+    countTo: count,
+    caption: 'Reviews on our Google listing',
+  },
+  {
+    label: `${site.yearsExperience} years in concrete`,
+    figure: site.yearsExperience,
+    caption: 'Years in the concrete trade',
+  },
+  {
+    label: 'Free estimates',
+    figure: 'Free',
+    caption: 'Estimates, usually bid on site',
+  },
+];
+---
+
+<section class="proof surface-cured" aria-label="At a glance">
+  <ul class="shell proof__list">
+    {proofs.map((proof) => (
+      <li class="proof__item" data-reveal>
+        <span class="visually-hidden">{`${proof.label}. `}</span>
+        <span class="proof__figure tabular" aria-hidden="true">
+          {proof.countTo === undefined ? (
+            proof.figure
+          ) : (
+            <span data-count={proof.countTo} data-decimals={proof.decimals ?? 0}>
+              {proof.figure}
+            </span>
+          )}
+        </span>
+        <span class="proof__caption">{proof.caption}</span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .proof {
+    border-bottom: var(--joint);
+  }
+  .proof__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-block: 0;
+    padding-block: 0;
+    list-style: none;
+  }
+  /* Saw-cut joints between cells, as on a poured slab. */
+  .proof__item {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    padding: 1.75rem 1rem 1.75rem 0;
+  }
+  .proof__item:nth-child(odd) {
+    border-right: var(--joint);
+  }
+  .proof__item:nth-child(even) {
+    padding-left: 1rem;
+  }
+  .proof__item:nth-child(-n + 2) {
+    border-bottom: var(--joint);
+  }
+  .proof__figure {
+    font-family: var(--font-display);
+    font-stretch: var(--display-stretch);
+    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .proof__caption {
+    max-width: 20ch;
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  @media (min-width: 64rem) {
+    .proof__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .proof__item:nth-child(n) {
+      padding: 2.5rem 1.5rem;
+      border-bottom: 0;
+      border-right: var(--joint);
+    }
+    .proof__item:first-child {
+      padding-left: 0;
+    }
+    .proof__item:last-child {
+      border-right: 0;
+    }
+  }
+</style>

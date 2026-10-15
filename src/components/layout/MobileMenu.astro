@@ -1,0 +1,85 @@
+---
+import { estimateCta, isCurrentPath, primaryNav } from '../../lib/content/navigation';
+import { site } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+
+const pathname = Astro.url.pathname;
+---
+
+<div id="mobile-menu" class="mobile-menu" hidden data-menu-panel>
+  <nav aria-label="Mobile">
+    <ul>
+      {primaryNav.map((link) => (
+        <li class="joint-bottom">
+          <a
+            href={link.href}
+            aria-current={isCurrentPath(pathname, link.href) ? 'page' : undefined}
+          >
+            {link.label}
+            <Icon name="arrow" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="mobile-menu__actions">
+    <a class="btn btn-primary" href={estimateCta.href}>
+      {estimateCta.label}
+    </a>
+    <a class="btn btn-outline" href={site.phoneHref}>
+      <Icon name="phone" />
+      Call {site.phone}
+    </a>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--layer-menu);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: calc(var(--header-h) + 1.5rem) var(--gutter) 2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--color-chalk);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: var(--joint);
+  }
+  li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 800;
+    font-stretch: var(--display-stretch);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  li a :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-alpenglow-ink);
+  }
+  li a[aria-current='page'] {
+    color: var(--color-alpenglow-ink);
+  }
+  .mobile-menu__actions {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 64rem) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>

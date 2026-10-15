@@ -1,0 +1,127 @@
+---
+import { estimateCta } from '../../lib/content/navigation';
+import { site } from '../../data/site';
+import GoogleBadge from '../reviews/GoogleBadge.astro';
+import Icon from '../ui/Icon.astro';
+import Photo from '../ui/Photo.astro';
+---
+
+<section class="hero on-dark" aria-labelledby="hero-title">
+  <div class="hero__media" data-parallax>
+    <Photo
+      id="photo-04"
+      priority
+      widths={[640, 960, 1280, 1680, 2400]}
+      sizes="100vw"
+      class="hero__img"
+    />
+  </div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="shell hero__content">
+    <GoogleBadge class="hero__badge" />
+    <div class="screed screed--load" style="--screed-color: var(--color-granite)">
+      <h1 id="hero-title" class="hero__title">
+        Concrete done right, by Frank and his crew.
+      </h1>
+      <span class="screed__board" aria-hidden="true"></span>
+    </div>
+    <p class="hero__sub">
+      Family-owned concrete and hardscape in {site.address.city}. Driveways, patios, sport courts,
+      steps and walls. Free estimates, often bid on site.
+    </p>
+    <div class="hero__actions">
+      <a class="btn btn-primary" href={estimateCta.href} data-magnetic>
+        {estimateCta.label}
+        <Icon name="arrow" />
+      </a>
+      <a class="btn btn-outline" href={site.phoneHref}>
+        <Icon name="phone" />
+        Call {site.phone}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+    min-height: min(100svh, 58rem);
+    overflow: hidden;
+    background-color: var(--color-granite);
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .hero__media :global(.hero__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Keep the crew and the slab in frame on portrait phones. */
+    object-position: 56% 60%;
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(
+        0deg,
+        rgb(23 28 31 / 0.92) 0%,
+        rgb(23 28 31 / 0.55) 48%,
+        rgb(23 28 31 / 0.1) 75%
+      ),
+      linear-gradient(90deg, rgb(23 28 31 / 0.45), transparent 70%);
+  }
+  .hero__content {
+    display: grid;
+    justify-items: start;
+    gap: 1.25rem;
+    padding-top: calc(var(--header-h) + 3rem);
+    padding-bottom: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  }
+  .hero__title {
+    max-width: 20ch;
+    font-size: var(--text-hero);
+    line-height: var(--text-hero--line-height);
+    letter-spacing: -0.025em;
+  }
+  .hero__sub {
+    max-width: 44ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: rgb(242 242 239 / 0.86);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 47.99rem) {
+    .hero__content {
+      padding-bottom: calc(var(--action-bar-h) + 2rem);
+    }
+  }
+  @media (max-width: 29.99rem) {
+    .hero__actions,
+    .hero__actions :global(.btn) {
+      width: 100%;
+    }
+  }
+  @media (min-width: 64rem) {
+    .hero__media :global(.hero__img) {
+      object-position: 50% 55%;
+    }
+    .hero__scrim {
+      background:
+        linear-gradient(90deg, rgb(23 28 31 / 0.88) 0%, rgb(23 28 31 / 0.55) 42%, transparent 72%),
+        linear-gradient(0deg, rgb(23 28 31 / 0.7), transparent 45%);
+    }
+  }
+</style>

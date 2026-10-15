@@ -1,0 +1,110 @@
+---
+import { GALLERY_CATEGORY_LABELS, gallery } from '../../data/gallery';
+import Icon from '../ui/Icon.astro';
+import Photo from '../ui/Photo.astro';
+import Screed from '../ui/Screed.astro';
+
+/** Featured work, minus the hero photo so the same shot never appears twice on Home. */
+const HERO_ID = 'photo-04';
+const featured = gallery.filter((item) => item.featured && item.id !== HERO_ID);
+---
+
+<section class="section strip" aria-labelledby="work-title">
+  <div class="shell strip__head">
+    <Screed>
+      <h2 id="work-title" class="text-h2">
+        Recent work around the valley
+      </h2>
+    </Screed>
+    <a class="arrow-link" href="/projects">
+      <span>See all {gallery.length} project photos</span>
+      <Icon name="arrow" />
+    </a>
+  </div>
+
+  <div
+    class="strip__scroller"
+    tabindex="0"
+    role="region"
+    aria-label="Featured projects, scrolls sideways"
+  >
+    <ul class="strip__track">
+      {featured.map((item) => (
+        <li class="strip__item">
+          <figure>
+            <Screed class="strip__frame">
+              <Photo id={item.id} widths={[400, 640, 900]} sizes="(min-width: 64rem) 30rem, 80vw" />
+            </Screed>
+            <figcaption>{GALLERY_CATEGORY_LABELS[item.category]}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .strip {
+    border-top: var(--joint);
+  }
+  .strip__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 2rem;
+  }
+  .strip__head h2 {
+    max-width: 16ch;
+  }
+  .strip__scroller {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-aggregate) transparent;
+  }
+  .strip__scroller:focus-visible {
+    outline-offset: -3px;
+  }
+  .strip__track {
+    display: flex;
+    gap: 0.75rem;
+    width: max-content;
+    margin: 0;
+    padding: 0 var(--gutter) 1.25rem;
+    list-style: none;
+  }
+  /* Alternate heights so the rail reads like stacked slabs, not a filmstrip. */
+  .strip__item {
+    width: min(80vw, 30rem);
+    scroll-snap-align: start;
+  }
+  .strip__item:nth-child(even) {
+    padding-top: 2.5rem;
+  }
+  .strip__item :global(.strip__frame) {
+    overflow: hidden;
+    border-radius: var(--radius-slab);
+    aspect-ratio: 4 / 5;
+    background: var(--color-cured);
+  }
+  .strip__item:nth-child(3n + 2) :global(.strip__frame) {
+    aspect-ratio: 4 / 3;
+  }
+  .strip__item :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  figcaption {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: var(--joint);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+  }
+</style>

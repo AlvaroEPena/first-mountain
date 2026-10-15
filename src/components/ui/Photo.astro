@@ -1,0 +1,53 @@
+---
+import { Picture } from 'astro:assets';
+
+import { galleryItem, photo } from '../../data/gallery';
+
+interface Props {
+  /** Gallery id, e.g. "photo-04". */
+  id: string;
+  /** Override the manifest alt (e.g. "" when a caption already describes the image). */
+  alt?: string;
+  /** Rendered widths to generate; capped at the file's native width (never upscale). */
+  widths?: number[];
+  sizes: string;
+  /** Above-the-fold images are eager and high priority; everything else is lazy. */
+  priority?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  alt,
+  widths = [480, 800, 1200, 1600],
+  sizes,
+  priority = false,
+  class: className,
+} = Astro.props;
+
+const src = photo(id);
+const item = galleryItem(id);
+const nativeWidth = src.width;
+const cappedWidths = [...new Set(widths.map((width) => Math.min(width, nativeWidth)))].sort(
+  (a, b) => a - b,
+);
+// The fallback <img src> would otherwise be encoded at the full source size; cap it at the
+// largest width we actually serve so dist stays small and nothing ships larger than needed.
+const fallbackWidth = cappedWidths[cappedWidths.length - 1] ?? nativeWidth;
+const fallbackHeight = Math.round((fallbackWidth * src.height) / src.width);
+---
+
+<Picture
+  src={src}
+  alt={alt ?? item.alt}
+  widths={cappedWidths}
+  width={fallbackWidth}
+  height={fallbackHeight}
+  sizes={sizes}
+  formats={['avif']}
+  fallbackFormat="webp"
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  decoding={priority ? 'sync' : 'async'}
+  class={className}
+/>

@@ -1,0 +1,194 @@
+---
+import { processSteps } from '../../data/process';
+import { reviews } from '../../data/reviews';
+import Photo from '../ui/Photo.astro';
+import Screed from '../ui/Screed.astro';
+
+const steps = processSteps.map((step) => {
+  const review = reviews.find((entry) => entry.id === step.reviewId);
+  if (!review) throw new Error(`Process step ${step.id} cites unknown review ${step.reviewId}`);
+  return { ...step, author: review.displayName };
+});
+---
+
+<section class="section process on-dark topo" aria-labelledby="process-title" data-process>
+  <div class="shell process__grid">
+    <div class="process__aside">
+      <p class="eyebrow">How a job goes</p>
+      <Screed surface="granite">
+        <h2 id="process-title" class="text-h2">
+          Four steps, in our customers' words.
+        </h2>
+      </Screed>
+      <!-- Wide screens only: a sticky photo that changes with the active step (decorative). -->
+      <div class="process__photos" aria-hidden="true">
+        {steps.map((step, index) => (
+          <div class="process__photo" data-step-photo style={index === 0 ? '' : 'opacity: 0'}>
+            <Photo id={step.photo} alt="" widths={[600, 900, 1200]} sizes="40vw" />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="process__track">
+      <span class="process__rail" aria-hidden="true">
+        <span data-process-rail></span>
+      </span>
+      <ol class="process__steps">
+        {steps.map((step, index) => (
+          <li class="process__step" data-step>
+            <span class="process__index tabular" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <div class="process__body">
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+              <blockquote>
+                <p>&ldquo;{step.quote}&rdquo;</p>
+                <footer>{step.author}, Google review</footer>
+              </blockquote>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .process__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .process__aside {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+  }
+  .process__photos {
+    display: none;
+  }
+  .process__track {
+    position: relative;
+  }
+  .process__steps {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* The joint rail: a hairline that fills with alpenglow as the steps pass (wide screens). */
+  .process__rail {
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 1.2rem;
+    width: 1px;
+    background: rgb(242 242 239 / 0.16);
+  }
+  .process__rail span {
+    position: absolute;
+    inset: 0;
+    background: var(--color-alpenglow-lit);
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  .process__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1.25rem;
+    padding-block: 1.75rem;
+    border-top: var(--joint-on-dark);
+  }
+  .process__step:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .process__index {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgb(242 242 239 / 0.35);
+    border-radius: var(--radius-slab);
+    background: var(--color-granite);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.9375rem;
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      border-color 0.3s;
+  }
+  /* Active step (set by the motion module on wide screens): the index block lights up. */
+  .process__step:global(.is-active) .process__index {
+    border-color: var(--color-alpenglow-lit);
+    background: var(--color-alpenglow-lit);
+    color: var(--color-granite);
+  }
+  .process__body {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .process__body h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+  }
+  .process__body > p {
+    color: var(--color-on-dark-muted);
+    max-width: 52ch;
+  }
+  blockquote {
+    margin-top: 0.25rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-alpenglow-lit);
+  }
+  blockquote p {
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+  blockquote footer {
+    margin-top: 0.35rem;
+    font-size: var(--text-small);
+    color: var(--color-on-dark-muted);
+  }
+
+  @media (min-width: 64rem) {
+    .process__grid {
+      grid-template-columns: 0.9fr 1fr;
+      gap: clamp(3rem, 1rem + 5vw, 7rem);
+    }
+    /* Pinned on wide screens with CSS sticky: works without JS, no pin-spacer jumps. */
+    .process__aside {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      align-self: start;
+    }
+    .process__photos {
+      display: grid;
+      margin-top: 1.5rem;
+      overflow: hidden;
+      border-radius: var(--radius-slab);
+      aspect-ratio: 4 / 3;
+    }
+    .process__photo {
+      grid-area: 1 / 1;
+    }
+    .process__photo :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Room to scroll through each step, only when the motion module sequences them. */
+    :global(html[data-motion='on']) .process__step {
+      min-height: 46vh;
+    }
+    .process__step {
+      align-content: start;
+      padding-block: 2.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import { oneLineAddress } from '../../lib/address';
+import { site } from '../../data/site';
+import HoursTable from '../contact/HoursTable.astro';
+import Icon from '../ui/Icon.astro';
+import Screed from '../ui/Screed.astro';
+---
+
+<section class="section area surface-cured" aria-labelledby="area-title">
+  <div class="shell area__grid">
+    <div class="area__copy">
+      <Screed surface="cured">
+        <h2 id="area-title" class="text-h2">
+          Based in Salt Lake City, working across the valley.
+        </h2>
+      </Screed>
+      <p class="lead" data-reveal>
+        We pour for homeowners in {site.serviceArea}. Not sure if you are in range? Call or text and
+        ask.
+      </p>
+      <div class="area__address" data-reveal>
+        <Icon name="pin" />
+        <address>
+          {site.legalName}
+          <br />
+          {oneLineAddress(site.address)}
+        </address>
+      </div>
+      <div class="area__actions" data-reveal>
+        <a class="btn btn-outline" href={site.links.directions} target="_blank" rel="noopener">
+          <Icon name="directions" />
+          Get directions
+          <span class="visually-hidden"> (opens Google Maps in a new tab)</span>
+        </a>
+        <a class="btn btn-outline" href={site.smsHref}>
+          <Icon name="message" />
+          Text {site.phone}
+        </a>
+      </div>
+    </div>
+    <div class="area__hours" data-reveal>
+      <h3>Hours</h3>
+      <HoursTable />
+    </div>
+  </div>
+</section>
+
+<style>
+  .area__grid {
+    display: grid;
+    gap: 3rem;
+  }
+  .area__copy {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+  .area__copy h2 {
+    max-width: 18ch;
+  }
+  .area__address {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .area__address :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-alpenglow-ink);
+  }
+  address {
+    font-style: normal;
+    font-weight: 600;
+  }
+  .area__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .area__hours {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    border-radius: var(--radius-slab);
+    background: var(--color-chalk);
+    border: var(--joint);
+  }
+  .area__hours h3 {
+    font-size: var(--text-h3);
+  }
+  @media (min-width: 64rem) {
+    .area__grid {
+      grid-template-columns: 1.3fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+</style>

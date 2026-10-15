@@ -1,0 +1,81 @@
+---
+import CtaBand from '../components/layout/CtaBand.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import RatingSummary from '../components/reviews/RatingSummary.astro';
+import ReviewCard from '../components/reviews/ReviewCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { reviews } from '../data/reviews';
+import { site } from '../data/site';
+import { ratingSentence } from '../lib/rating';
+
+const crumbs = [{ name: 'Reviews', path: '/reviews' }];
+// Newest first; the manifest order is kept within a year.
+const ordered = [...reviews].sort((a, b) => b.approxYear - a.approxYear);
+---
+
+<BaseLayout
+  title="Google reviews"
+  description={`${ratingSentence(site.rating)}. Read what customers say about ${site.owner} and the ${site.name} crew.`}
+  crumbs={crumbs}
+  closingSurface="cured"
+>
+  <PageHero
+    title="Reviews from the people we pour for"
+    lead="Every written review rated 4 or 5 stars on our Google listing, in the customers' own words."
+    crumbs={crumbs}
+  >
+    <RatingSummary slot="aside" size="large" />
+  </PageHero>
+
+  <section class="section surface-cured" aria-labelledby="all-reviews">
+    <div class="shell">
+      <div class="reviews__head">
+        <h2 id="all-reviews" class="text-h3">
+          {ordered.length} written reviews
+        </h2>
+        <p class="reviews__note">
+          The {site.rating.value.toFixed(1)} average counts all {site.rating.count} ratings on
+          Google, including the ones not shown here.
+        </p>
+      </div>
+      <div class="reviews__list">
+        {ordered.map((review) => (
+          <ReviewCard review={review} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand slot="closing" />
+</BaseLayout>
+
+<style>
+  .reviews__head {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .reviews__note {
+    max-width: 60ch;
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  /* Text-only cards in columns: no focusable content inside, so column order is safe. */
+  .reviews__list {
+    columns: 1;
+    column-gap: 1rem;
+  }
+  .reviews__list > :global(*) {
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .reviews__list {
+      columns: 2;
+    }
+  }
+  @media (min-width: 80rem) {
+    .reviews__list {
+      columns: 3;
+    }
+  }
+</style>

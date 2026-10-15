@@ -1,0 +1,48 @@
+---
+import CtaBand from '../components/layout/CtaBand.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import FaqList from '../components/services/FaqList.astro';
+import ServiceNav from '../components/services/ServiceNav.astro';
+import ServiceSection from '../components/services/ServiceSection.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { serviceById } from '../data/services';
+import type { ServiceId } from '../data/service-ids';
+import { site } from '../data/site';
+
+/** Composition per section, chosen so no layout repeats back to back (see ServiceSection). */
+const plan: { id: ServiceId; layout: 'gallery' | 'split' | 'quote'; flip?: boolean }[] = [
+  { id: 'driveways', layout: 'gallery' },
+  { id: 'patios-pads', layout: 'split' },
+  { id: 'sport-courts', layout: 'gallery' },
+  { id: 'steps-walkways', layout: 'split', flip: true },
+  { id: 'rv-pads', layout: 'quote' },
+  { id: 'retaining-walls', layout: 'split' },
+  { id: 'hardscape', layout: 'gallery' },
+  { id: 'fences', layout: 'quote' },
+];
+
+const crumbs = [{ name: 'Services', path: '/services' }];
+---
+
+<BaseLayout
+  title="Concrete and hardscape services"
+  description={`Driveways, patios and pads, sport courts, steps, RV pads, retaining walls, pavers and fences in ${site.address.city}. What each job includes, in our customers' words.`}
+  crumbs={crumbs}
+>
+  <PageHero
+    title="What we pour, and what comes with it"
+    lead="Every job starts with a free bid and ends with a clean site. Here is what each kind of work includes, with what customers said about it."
+    crumbs={crumbs}
+  />
+  <ServiceNav />
+  {plan.map((entry, index) => (
+    <ServiceSection
+      service={serviceById(entry.id)}
+      layout={entry.layout}
+      flip={entry.flip}
+      surface={index % 2 === 0 ? 'chalk' : 'cured'}
+    />
+  ))}
+  <FaqList />
+  <CtaBand slot="closing" />
+</BaseLayout>

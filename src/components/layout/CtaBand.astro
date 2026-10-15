@@ -1,0 +1,80 @@
+---
+import { estimateCta } from '../../lib/content/navigation';
+import { site } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+import Screed from '../ui/Screed.astro';
+
+interface Props {
+  title?: string;
+  body?: string;
+}
+
+const {
+  title = 'Tell Frank what you want poured.',
+  body = 'Estimates are free, and Frank usually comes out to see the job before he bids it.',
+} = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="shell cta__inner">
+    <Screed surface="granite">
+      <h2 id="cta-title" class="cta__title">
+        {title}
+      </h2>
+    </Screed>
+    <div class="cta__side">
+      <p class="lead">{body}</p>
+      <div class="cta__actions">
+        <a class="btn btn-primary" href={estimateCta.href} data-magnetic>
+          {estimateCta.label}
+        </a>
+        <a class="btn btn-outline" href={site.phoneHref}>
+          <Icon name="phone" />
+          Call {site.phone}
+        </a>
+        <a class="btn btn-outline" href={site.smsHref}>
+          <Icon name="message" />
+          Text us
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(2.5rem, 1rem + 5vw, 6rem) clamp(3rem, 2rem + 4vw, 5.5rem);
+    border-bottom: var(--joint-on-dark);
+  }
+  .cta__inner {
+    display: grid;
+    gap: 2rem;
+  }
+  .cta__title {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+    max-width: 14ch;
+  }
+  .cta__side {
+    display: grid;
+    gap: 1.75rem;
+    align-content: end;
+  }
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  @media (max-width: 29.99rem) {
+    .cta__actions :global(.btn) {
+      width: 100%;
+    }
+  }
+  @media (min-width: 64rem) {
+    .cta__inner {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 4rem;
+      align-items: end;
+    }
+  }
+</style>

@@ -1,0 +1,139 @@
+---
+/**
+ * Weekly hours from site.ts. The table is the no-JS fallback; the script adds today's highlight
+ * and an "Open now / Closed" line computed in the business time zone (lib/open-hours.ts).
+ */
+import { site } from '../../data/site';
+import { WEEKDAY_NAMES, formatTime, hoursFor } from '../../lib/open-hours';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const rows = WEEKDAY_NAMES.map((name, index) => {
+  const rule = hoursFor(index + 1, site.hours);
+  return {
+    weekday: index + 1,
+    name,
+    hours: rule ? `${formatTime(rule.opens)} to ${formatTime(rule.closes)}` : 'Closed',
+    isClosed: !rule,
+  };
+});
+---
+
+<div
+  class:list={['hours', className]}
+  data-hours
+  data-time-zone={site.timeZone}
+  data-rules={JSON.stringify(site.hours)}
+>
+  <p class="hours__status" data-hours-status hidden></p>
+  <table>
+    <caption class="visually-hidden">Business hours, Mountain Time</caption>
+    <tbody>
+      {rows.map((row) => (
+        <tr data-weekday={row.weekday} class:list={{ 'is-closed': row.isClosed }}>
+          <th scope="row">{row.name}</th>
+          <td>{row.hours}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="hours__note">All times are Mountain Time.</p>
+</div>
+
+<style>
+  .hours {
+    display: grid;
+    gap: 1rem;
+  }
+  .hours__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-self: start;
+    min-height: 2.25rem;
+    padding: 0.3rem 0.85rem 0.3rem 0.7rem;
+    border-radius: var(--radius-slab);
+    background: var(--color-granite);
+    color: var(--color-on-dark);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+  /* The one semantic dot on the site: open (pine) or closed (aggregate). */
+  .hours__status::before {
+    content: '';
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--color-aggregate);
+  }
+  .hours__status[data-open]::before {
+    background: var(--color-pine-lit);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  tr {
+    border-bottom: var(--joint);
+  }
+  tr:first-child {
+    border-top: var(--joint);
+  }
+  th,
+  td {
+    padding: 0.7rem 0;
+    text-align: left;
+    font-weight: 500;
+  }
+  td {
+    text-align: right;
+  }
+  tr.is-closed td {
+    color: var(--color-ink-muted);
+  }
+  tr[aria-current] th,
+  tr[aria-current] td {
+    font-weight: 800;
+  }
+  tr[aria-current] th::before {
+    content: '';
+    display: inline-block;
+    width: 0.75rem;
+    height: 2px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    background: var(--color-alpenglow);
+  }
+  .hours__note {
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+</style>
+
+<script>
+  import { getOpenStatus, statusMessage, type HoursRule } from '../../lib/open-hours';
+
+  for (const block of document.querySelectorAll<HTMLElement>('[data-hours]')) {
+    const timeZone = block.dataset.timeZone;
+    const rules = JSON.parse(block.dataset.rules ?? '[]') as HoursRule[];
+    const status = block.querySelector<HTMLElement>('[data-hours-status]');
+    if (!timeZone || !status) continue;
+
+    const result = getOpenStatus(new Date(), rules, timeZone);
+    status.textContent = statusMessage(result);
+    status.toggleAttribute('data-open', result.isOpen);
+    status.hidden = false;
+
+    const today = block.querySelector<HTMLElement>(`tr[data-weekday="${result.weekday}"]`);
+    if (today) {
+      today.setAttribute('aria-current', 'date');
+      today
+        .querySelector('th')
+        ?.insertAdjacentHTML('beforeend', '<span class="visually-hidden"> (today)</span>');
+    }
+  }
+</script>

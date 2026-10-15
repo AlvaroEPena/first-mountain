@@ -1,0 +1,103 @@
+---
+import { cityLine } from '../lib/address';
+import HoursTable from '../components/contact/HoursTable.astro';
+import MapFacade from '../components/contact/MapFacade.astro';
+import QuoteForm from '../components/contact/QuoteForm.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import Icon from '../components/ui/Icon.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+
+const crumbs = [{ name: 'Contact', path: '/contact' }];
+const firstName = site.owner.split(' ')[0];
+---
+
+<BaseLayout
+  title="Get a free estimate"
+  description={`Request a free concrete estimate from ${site.name} in ${site.address.city}. Call or text ${site.phone}, or send the form.`}
+  crumbs={crumbs}
+>
+  <PageHero
+    title="Get a free estimate"
+    lead={`Tell us about the job. ${firstName} usually comes out to look at it before he bids. Prefer to talk? Call or text.`}
+    crumbs={crumbs}
+  >
+    <div class="contact__quick">
+      <a class="btn btn-primary" href={site.phoneHref}>
+        <Icon name="phone" />
+        Call {site.phone}
+      </a>
+      <a class="btn btn-outline" href={site.smsHref}>
+        <Icon name="message" />
+        Text us
+      </a>
+    </div>
+  </PageHero>
+
+  <section class="section contact" aria-label="Quote request and visit details">
+    <div class="shell contact__grid">
+      <div class="contact__form">
+        <h2 class="text-h3">Request an estimate</h2>
+        <QuoteForm />
+      </div>
+      <aside class="contact__aside" aria-label="Hours and location">
+        <div class="contact__block">
+          <h2 class="text-h3">Hours</h2>
+          <HoursTable />
+        </div>
+        <div class="contact__block">
+          <h2 class="text-h3">Find us</h2>
+          <address>
+            {site.legalName}
+            <br />
+            {site.address.street}
+            <br />
+            {cityLine(site.address)}
+          </address>
+          <MapFacade />
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact__quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .contact__grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+  .contact__form {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+  .contact__aside {
+    display: grid;
+    gap: 3rem;
+    align-content: start;
+  }
+  .contact__block {
+    display: grid;
+    gap: 1rem;
+  }
+  address {
+    font-style: normal;
+    line-height: 1.6;
+  }
+  @media (max-width: 29.99rem) {
+    .contact__quick :global(.btn) {
+      width: 100%;
+    }
+  }
+  @media (min-width: 64rem) {
+    .contact__grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: clamp(3rem, 1rem + 5vw, 6rem);
+    }
+  }
+</style>

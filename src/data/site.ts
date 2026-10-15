@@ -7,7 +7,6 @@ export const site = {
   name: 'First Mountain Construction',
   legalName: 'First Mountain Construction, LLC',
   owner: 'Frank Mounga',
-  category: 'Concrete and hardscape contractor',
   /** confirm: 925 is a Bay Area code; it is the number on their Google listing. */
   phone: '(925) 457-5539',
   phoneE164: '+19254575539',
@@ -32,8 +31,6 @@ export const site = {
   rating: { value: 4.7, count: 30, capturedOn: '2026-10-14' },
   /** confirm: "21 years of experience" on HomeAdvisor (self-reported). */
   yearsExperience: '20+',
-  familyOwned: true,
-  freeEstimates: true,
   /** confirm: inferred from the address and review locations, not stated by the business. */
   serviceArea: 'Salt Lake City and the Salt Lake Valley',
   areaServed: ['Salt Lake City, UT', 'Salt Lake County, UT'],
@@ -45,10 +42,7 @@ export const site = {
     /** Keyless share-embed; only loaded after the visitor clicks "Show map". */
     mapEmbed:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3021.0!2d-111.9483085!3d40.7987704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8752f401c44c0001%3A0x6a907200a7cff716!2sFirst%20Mountain%20Construction!5e0!3m2!1sen!2sus!4v1792018000000!5m2!1sen!2sus',
-    /** Old site, currently down. Not linked anywhere. */
-    oldWebsite: 'https://firstmountainconstruction.net',
   },
-  url: import.meta.env.PUBLIC_SITE_URL ?? 'http://localhost:4334',
 } as const;
 
 export type Site = typeof site;

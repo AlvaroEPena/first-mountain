@@ -1,9 +1,9 @@
 # Progress Log
 
-**Current phase:** 4-scaffolded
+**Current phase:** 6-qa
 <!-- phases: 1-intake · 2-research · 3-spec-approved · 4-scaffolded · 5-building (slice N) · 6-qa · 7-review · 8-done -->
 
-**Next step:** Phase 5 build (frontend-engineer: design system, logo, all pages)
+**Next step:** QA (qa-tester), then code review, then push to origin (user-approved: github.com/AlvaroEPena/first-mountain)
 
 ## Gate status
 
@@ -56,3 +56,17 @@
   registry row, git init + initial commit.
 - Gates: `npm run check` pass, `npm run build` pass, dev server starts on 4334.
 - Note: committed photos are 34 MB (research estimated 15–25 MB); acceptable, revisit if needed.
+
+### 2026-10-14 — 5-building (done)
+
+- frontend-engineer built all 7 pages, design system (docs/DESIGN.md: Archivo expanded + Instrument
+  Sans, alpenglow #D9643A, granite/cured surfaces), logo + brand asset script, gallery + PhotoSwipe,
+  quote form (demo mode), hours, map facade, GSAP motion, JSON-LD. 5 commits.
+- Orchestrator integration: found and fixed a bug where the count-up effect (`[data-count]`) wiped
+  the services photo grids and left later scroll reveals stuck (renamed layout hook to `data-photos`).
+- Gates: check pass (0 type errors, lint/format clean, 64 unit tests), build pass (7 pages).
+  Initial JS ~2-3 KB gz per page, /contact 27 KB (Zod). dist 67 MB after prune.
+- Open: Pavers 4-photo mosaic leaves a gap; home "Steps and walkways" bento tile has no photo;
+  no Google "write a review" link (no place ID); Lighthouse not measured yet.
+- User asked to push to https://github.com/AlvaroEPena/first-mountain when done (origin added,
+  not pushed).

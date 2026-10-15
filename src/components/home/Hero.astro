@@ -1,4 +1,5 @@
 ---
+import { ownerFirstName } from '../../lib/owner';
 import { estimateCta } from '../../lib/content/navigation';
 import { site } from '../../data/site';
 import GoogleBadge from '../reviews/GoogleBadge.astro';
@@ -11,7 +12,7 @@ import Photo from '../ui/Photo.astro';
     <Photo
       id="photo-04"
       priority
-      widths={[640, 960, 1280, 1680, 2400]}
+      widths={[640, 828, 1080, 1440, 1920, 2400]}
       sizes="100vw"
       class="hero__img"
     />
@@ -22,7 +23,7 @@ import Photo from '../ui/Photo.astro';
     <GoogleBadge class="hero__badge" />
     <div class="screed screed--load" style="--screed-color: var(--color-granite)">
       <h1 id="hero-title" class="hero__title">
-        Concrete done right, by Frank and his crew.
+        Concrete done right, by {ownerFirstName} and his crew.
       </h1>
       <span class="screed__board" aria-hidden="true"></span>
     </div>

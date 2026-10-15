@@ -1,5 +1,8 @@
 ---
 import { getImage } from 'astro:assets';
+// Lightbox styles ship with the page (about 3 KB gzipped, inlined): stylesheets are inlined at
+// build time, so a lazily imported CSS chunk would have no file to fetch.
+import 'photoswipe/style.css';
 
 import { gallery, photo } from '../../data/gallery';
 import Photo from '../ui/Photo.astro';
@@ -41,6 +44,7 @@ const entries = await Promise.all(
         <Photo
           id={item.id}
           widths={[320, 480, 720]}
+          aspect={4 / 3}
           sizes="(min-width: 90rem) 22rem, (min-width: 64rem) 31vw, 50vw"
         />
         <span class="visually-hidden"> (opens larger view)</span>

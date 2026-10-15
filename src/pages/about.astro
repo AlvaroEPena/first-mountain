@@ -1,4 +1,5 @@
 ---
+import { ownerFirstName } from '../lib/owner';
 import ValueGrid from '../components/about/ValueGrid.astro';
 import CtaBand from '../components/layout/CtaBand.astro';
 import PageHero from '../components/layout/PageHero.astro';
@@ -13,7 +14,6 @@ const crumbs = [{ name: 'About', path: '/about' }];
 const partner = reviews.find((review) => review.id === partnerReviewId);
 if (!partner) throw new Error(`Unknown partner review ${partnerReviewId}`);
 const [leadPhoto, ...morePhotos] = crewPhotos;
-const firstName = site.owner.split(' ')[0];
 ---
 
 <BaseLayout
@@ -24,7 +24,7 @@ const firstName = site.owner.split(' ')[0];
 >
   <PageHero
     title={`${site.owner} and the crew`}
-    lead={`${site.name} is family owned and run by ${firstName}, with ${site.yearsExperience} years in the concrete trade. When you call, you talk to ${firstName}, the person who bids the job.`}
+    lead={`${site.name} is family owned and run by ${ownerFirstName}, with ${site.yearsExperience} years in the concrete trade. When you call, you talk to ${ownerFirstName}, the person who bids the job.`}
     crumbs={crumbs}
   >
     <Screed slot="aside" class="about__lead-photo">
@@ -39,13 +39,13 @@ const firstName = site.owner.split(' ')[0];
           One crew, start to finish.
         </h2>
         <p data-reveal>
-          {firstName} comes out to look at the ground, measure and talk it through before he gives
-          you a number. Then he and his crew tear out the old concrete, grade the base, set the
-          forms and rebar, pour, finish and clean up after.
+          {ownerFirstName} comes out to look at the ground, measure and talk it through before he
+          gives you a number. Then he and his crew tear out the old concrete, grade the base, set
+          the forms and rebar, pour, finish and clean up after.
         </p>
         <p data-reveal>
           Homeowners hire us for driveways, patios, sport courts, steps and walls. Other contractors
-          hire {firstName} too, as their concrete subcontractor.
+          hire {ownerFirstName} too, as their concrete subcontractor.
         </p>
       </div>
       <ul class="about-story__photos">
@@ -132,7 +132,6 @@ const firstName = site.owner.split(' ')[0];
   .partner__quote {
     max-width: 22ch;
     font-family: var(--font-display);
-    font-stretch: var(--display-stretch);
     font-size: var(--text-h2);
     font-weight: 800;
     line-height: 1.08;

@@ -6,6 +6,7 @@ import { estimateCta } from '../lib/content/navigation';
 
 <BaseLayout
   title="Page not found"
+  hasCanonical={false}
   description="This page does not exist. Head back to the home page, see our project photos or get a free estimate."
 >
   <section class="section lost topo-light" aria-labelledby="lost-title">
@@ -48,9 +49,8 @@ import { estimateCta } from '../lib/content/navigation';
   }
   .lost__code {
     font-family: var(--font-display);
-    font-stretch: 125%;
     font-size: clamp(5rem, 3rem + 10vw, 11rem);
-    font-weight: 900;
+    font-weight: 800;
     line-height: 0.85;
     letter-spacing: -0.04em;
     color: var(--color-aggregate);

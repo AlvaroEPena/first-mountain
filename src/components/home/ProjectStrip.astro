@@ -7,6 +7,8 @@ import Screed from '../ui/Screed.astro';
 /** Featured work, minus the hero photo so the same shot never appears twice on Home. */
 const HERO_ID = 'photo-04';
 const featured = gallery.filter((item) => item.featured && item.id !== HERO_ID);
+/** Frames alternate between portrait and landscape (every third, from the second, is 4:3). */
+const frameAspect = (index: number) => (index % 3 === 1 ? 4 / 3 : 4 / 5);
 ---
 
 <section class="section strip" aria-labelledby="work-title">
@@ -29,11 +31,16 @@ const featured = gallery.filter((item) => item.featured && item.id !== HERO_ID);
     aria-label="Featured projects, scrolls sideways"
   >
     <ul class="strip__track">
-      {featured.map((item) => (
+      {featured.map((item, index) => (
         <li class="strip__item">
           <figure>
             <Screed class="strip__frame">
-              <Photo id={item.id} widths={[400, 640, 900]} sizes="(min-width: 64rem) 30rem, 80vw" />
+              <Photo
+                id={item.id}
+                widths={[400, 640, 900]}
+                sizes="(min-width: 64rem) 30rem, 80vw"
+                aspect={frameAspect(index)}
+              />
             </Screed>
             <figcaption>{GALLERY_CATEGORY_LABELS[item.category]}</figcaption>
           </figure>

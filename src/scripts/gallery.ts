@@ -55,10 +55,8 @@ function setupLightbox(gridElement: HTMLElement): void {
   let pending: Promise<PhotoSwipeLightbox> | undefined;
 
   async function createLightbox(): Promise<PhotoSwipeLightbox> {
-    const [{ default: Lightbox }] = await Promise.all([
-      import('photoswipe/lightbox'),
-      import('photoswipe/style.css'),
-    ]);
+    // PhotoSwipe's CSS is imported statically by GalleryGrid (inlined with the page styles).
+    const { default: Lightbox } = await import('photoswipe/lightbox');
     const instance = new Lightbox({
       gallery: gridElement,
       // Evaluated at open time, so filtered-out photos are skipped.
@@ -83,14 +81,20 @@ function setupLightbox(gridElement: HTMLElement): void {
     return instance;
   }
 
+  const linkFor = (event: Event) =>
+    (event.target as HTMLElement).closest<HTMLAnchorElement>('a[data-pswp-width]');
+
+  // Safari does not focus links on click, and PhotoSwipe returns focus to whatever was focused
+  // when it opened. Focusing in the capture phase runs before PhotoSwipe's own click handler,
+  // on every open, not only the first.
+  gridElement.addEventListener('click', (event) => linkFor(event)?.focus(), { capture: true });
+
   gridElement.addEventListener('click', async (event) => {
     // Once created, the lightbox handles clicks itself.
     if (lightbox) return;
-    const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[data-pswp-width]');
+    const link = linkFor(event);
     if (!link) return;
     event.preventDefault();
-    // Safari does not focus links on click; PhotoSwipe returns focus to the active element.
-    link.focus();
     try {
       // Cache the promise so two quick clicks cannot create two lightboxes.
       const instance = await (pending ??= createLightbox());

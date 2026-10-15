@@ -13,6 +13,11 @@ interface Props {
   sizes: string;
   /** Above-the-fold images are eager and high priority; everything else is lazy. */
   priority?: boolean;
+  /**
+   * Crop the renditions to this width/height ratio (cover, centred) when the frame shows a fixed
+   * crop. Ships only the pixels on screen instead of a full portrait squeezed into a landscape box.
+   */
+  aspect?: number;
   class?: string;
 }
 
@@ -22,19 +27,22 @@ const {
   widths = [480, 800, 1200, 1600],
   sizes,
   priority = false,
+  aspect,
   class: className,
 } = Astro.props;
 
 const src = photo(id);
 const item = galleryItem(id);
-const nativeWidth = src.width;
-const cappedWidths = [...new Set(widths.map((width) => Math.min(width, nativeWidth)))].sort(
+const ratio = aspect ?? src.width / src.height;
+// Never upscale: a crop is limited by the source's width and by its height.
+const maxWidth = Math.floor(Math.min(src.width, src.height * ratio));
+const cappedWidths = [...new Set(widths.map((width) => Math.min(width, maxWidth)))].sort(
   (a, b) => a - b,
 );
 // The fallback <img src> would otherwise be encoded at the full source size; cap it at the
 // largest width we actually serve so dist stays small and nothing ships larger than needed.
-const fallbackWidth = cappedWidths[cappedWidths.length - 1] ?? nativeWidth;
-const fallbackHeight = Math.round((fallbackWidth * src.height) / src.width);
+const fallbackWidth = cappedWidths[cappedWidths.length - 1] ?? maxWidth;
+const fallbackHeight = Math.round(fallbackWidth / ratio);
 ---
 
 <Picture
@@ -43,11 +51,12 @@ const fallbackHeight = Math.round((fallbackWidth * src.height) / src.width);
   widths={cappedWidths}
   width={fallbackWidth}
   height={fallbackHeight}
+  fit="cover"
   sizes={sizes}
   formats={['avif']}
   fallbackFormat="webp"
   loading={priority ? 'eager' : 'lazy'}
   fetchpriority={priority ? 'high' : 'auto'}
-  decoding={priority ? 'sync' : 'async'}
+  decoding="async"
   class={className}
 />

@@ -55,14 +55,34 @@ export const quoteRequestSchema = z.object({
     .trim()
     .min(10, 'Tell us a little about the project (10+ characters)')
     .max(2000, 'Keep it under 2000 characters'),
-  /** Honeypot: real visitors never fill this. Must be empty. */
-  website: z.string().max(0).optional(),
+  /** Honeypot: real visitors never fill this. Whitespace counts as empty (the only rule). */
+  website: z.string().trim().max(0).optional(),
 });
 
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;
 export type QuoteField = keyof QuoteRequest;
 export type QuoteFieldErrors = Partial<Record<QuoteField, string>>;
-export type QuoteResponse = { ok: true } | { ok: false; errors: QuoteFieldErrors };
+
+const fieldErrorsSchema = z.partialRecord(
+  z.enum(Object.keys(quoteRequestSchema.shape) as [QuoteField, ...QuoteField[]]),
+  z.string(),
+);
+
+/**
+ * What the endpoint must reply. `errors` is optional on rejection: a rate limit or bot check
+ * may reject without naming a field, and the form then shows a general failure.
+ */
+export const quoteResponseSchema = z.discriminatedUnion('ok', [
+  z.object({ ok: z.literal(true) }),
+  z.object({ ok: z.literal(false), errors: fieldErrorsSchema.optional() }),
+]);
+export type QuoteResponse = z.infer<typeof quoteResponseSchema>;
+
+/** Validate an endpoint reply; anything malformed is `undefined` (treat as a failed send). */
+export function parseQuoteResponse(body: unknown): QuoteResponse | undefined {
+  const result = quoteResponseSchema.safeParse(body);
+  return result.success ? result.data : undefined;
+}
 
 /** Flatten Zod issues into one message per field (first issue wins). */
 export function toFieldErrors(error: z.ZodError): QuoteFieldErrors {

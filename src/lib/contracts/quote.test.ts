@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { parseQuoteForm, projectTypeFromQuery, quoteRequestSchema, toFieldErrors } from './quote';
+import {
+  parseQuoteForm,
+  parseQuoteResponse,
+  projectTypeFromQuery,
+  quoteRequestSchema,
+  toFieldErrors,
+} from './quote';
 
 const valid = {
   name: 'Jane Doe',
@@ -70,6 +76,30 @@ describe('parseQuoteForm', () => {
     const result = parseQuoteForm(new FormData());
     expect(result.ok).toBe(false);
     if (!result.ok) expect(Object.keys(result.errors)).toContain('phone');
+  });
+});
+
+describe('parseQuoteResponse', () => {
+  it('accepts success and rejections with or without field errors', () => {
+    expect(parseQuoteResponse({ ok: true })).toEqual({ ok: true });
+    expect(parseQuoteResponse({ ok: false })).toEqual({ ok: false });
+    expect(parseQuoteResponse({ ok: false, errors: { phone: 'Bad phone' } })).toEqual({
+      ok: false,
+      errors: { phone: 'Bad phone' },
+    });
+  });
+
+  it('rejects malformed replies and unknown error keys', () => {
+    expect(parseQuoteResponse(null)).toBeUndefined();
+    expect(parseQuoteResponse({ status: 'ok' })).toBeUndefined();
+    expect(parseQuoteResponse({ ok: false, errors: { form: 'Rate limited' } })).toBeUndefined();
+  });
+});
+
+describe('honeypot', () => {
+  it('treats whitespace as empty and anything else as a bot', () => {
+    expect(quoteRequestSchema.safeParse({ ...valid, website: '   ' }).success).toBe(true);
+    expect(quoteRequestSchema.safeParse({ ...valid, website: 'x' }).success).toBe(false);
   });
 });
 

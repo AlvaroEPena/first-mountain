@@ -53,7 +53,7 @@ test.describe('content without JavaScript', () => {
     await expectSeen(firstQuote);
     await expect(firstQuote).not.toBeEmpty();
     await expect(
-      page.getByRole('region', { name: 'At a glance' }).locator('[data-count]'),
+      page.getByRole('region', { name: 'At a glance' }).locator('[data-count-up]'),
     ).toHaveText(['4.7', '30']);
   });
 

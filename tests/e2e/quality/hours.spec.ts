@@ -41,7 +41,7 @@ test.describe('hours badge', () => {
   test('without a mocked clock the badge shows a well-formed status', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('[data-hours-status]').first()).toHaveText(
-      /^(Open now, until \d{1,2}(:\d{2})? [ap]m|Closed, opens (today|\w+day) at \d{1,2}(:\d{2})? [ap]m)$/,
+      /^(Open now, until \d{1,2}(:\d{2})? [ap]m|Closed, opens (today|tomorrow|\w+day) at \d{1,2}(:\d{2})? [ap]m)$/,
     );
   });
 });

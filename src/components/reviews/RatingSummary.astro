@@ -17,7 +17,7 @@ const { value, count, capturedOn } = site.rating;
 
 <div class:list={['rating', `rating--${size}`]} id={id}>
   <p class="rating__value tabular" aria-hidden="true">
-    <span data-count={value} data-decimals="1">
+    <span data-count-up={value} data-decimals="1">
       {value.toFixed(1)}
     </span>
   </p>

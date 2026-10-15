@@ -44,8 +44,8 @@ export function revealOnScroll(): void {
 
 /** The 4.7 and the 30 count up once. Motivation: make the proof land as the visitor reaches it. */
 export function countUp(): void {
-  for (const node of all('[data-count]')) {
-    const target = Number(node.dataset.count);
+  for (const node of all('[data-count-up]')) {
+    const target = Number(node.dataset.countUp);
     const decimals = Number(node.dataset.decimals ?? 0);
     if (Number.isNaN(target)) continue;
     const state = { value: 0 };

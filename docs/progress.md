@@ -1,9 +1,9 @@
 # Progress Log
 
-**Current phase:** 6-qa
+**Current phase:** 8-done (pushed to GitHub, not deployed)
 <!-- phases: 1-intake · 2-research · 3-spec-approved · 4-scaffolded · 5-building (slice N) · 6-qa · 7-review · 8-done -->
 
-**Next step:** QA (qa-tester), then code review, then push to origin (user-approved: github.com/AlvaroEPena/first-mountain)
+**Next step:** client review; then the launch checklist in README.md (confirm facts, approval for photos/reviews, wire form, deploy)
 
 ## Gate status
 
@@ -70,3 +70,23 @@
   no Google "write a review" link (no place ID); Lighthouse not measured yet.
 - User asked to push to https://github.com/AlvaroEPena/first-mountain when done (origin added,
   not pushed).
+
+### 2026-10-14 — 6-qa, 7-review, 8-done
+
+- QA (qa-tester): wrote Playwright suite (journeys J1-J10, regression, a11y, images, no-JS,
+  structured data, copy, links, responsive, layout, hours). First run 304 pass / 9 fail; all 9
+  were product bugs (focus under mobile bar, hardscape mosaic gap, steps tile photo, fences tile
+  clipping, reduced-motion transitions, LCP, robots.txt) and were fixed by frontend-engineer.
+- Lighthouse mobile, Home: Performance 91 -> 98, Accessibility 100, Best Practices 100, SEO 66
+  (noindex only). LCP 3.4 s -> 2.3 s (budget 2.0 s; remaining gap is lazy bento photos inside
+  Chrome's preload distance), CLS 0.
+- Review (code-reviewer): no Critical/High. Fixed: quote reply schema, same-origin endpoint
+  rule, .env loading via loadEnv (PUBLIC_SITE_URL was ignored), no-JS form fallback, partial
+  stars, data-count-up hook, honeypot rename + no fake send in demo mode, failsafe race,
+  "opens tomorrow", Safari lightbox focus, 404 canonical, menu inert, dedupe, full reviewer names
+  dropped from shipped data, metadata test widened to public/ images.
+- Left as Low (documented in README launch checklist): single noindex switch, HSTS
+  includeSubDomains review, CSP script hashes, zod/mini for /contact (27 KB gz), WebP fallback
+  could be dropped (-26 MB dist), no Google "write a review" link (place ID unknown).
+- README rewritten; handoff screenshots in docs/screenshots/.
+- Pushed main to https://github.com/AlvaroEPena/first-mountain (user-approved). Not deployed.

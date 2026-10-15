@@ -24,8 +24,10 @@ const highlights = reviews.filter((review) => review.highlight);
     </a>
   </div>
 
-  <!-- One marquee on the page. It pauses on hover, on focus and with the button (WCAG 2.2.2),
-       and turns into a plain sideways scroller under reduced motion. -->
+  <!-- One marquee on the page. It keeps moving under the mouse; the button pauses it (WCAG
+       2.2.2) and turns it into a sideways scroller (swipe, or the mouse wheel over it), and it
+       also holds still while a keyboard user is focused inside it. Under reduced motion it is
+       a plain scroller from the start. -->
   <div class="track" data-track>
     <div class="track__viewport" tabindex="0" role="region" aria-label="Customer quotes">
       <div class="track__rail">
@@ -44,7 +46,10 @@ const highlights = reviews.filter((review) => review.highlight);
       </div>
     </div>
     <div class="shell track__controls">
-      <button type="button" class="chip" data-track-toggle>
+      <p class="track__hint" data-track-hint hidden>
+        Swipe or scroll to browse
+      </p>
+      <button type="button" class="chip" data-track-toggle aria-pressed="false">
         Pause quotes
       </button>
     </div>
@@ -72,8 +77,14 @@ const highlights = reviews.filter((review) => review.highlight);
   }
   .track__controls {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
+    gap: 1rem;
     margin-top: 1rem;
+  }
+  .track__hint {
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
   }
   .track__viewport {
     overflow: hidden;
@@ -87,10 +98,18 @@ const highlights = reviews.filter((review) => review.highlight);
     width: max-content;
     animation: marquee 90s linear infinite;
   }
-  .track:hover .track__rail,
-  .track:focus-within .track__rail,
-  .track[data-paused] .track__rail {
+  /* Keyboard focus holds it still (mouse clicks and hover do not). */
+  .track:has(:focus-visible) .track__rail {
     animation-play-state: paused;
+  }
+  /* Paused with the button: the script converts the animation offset into scrollLeft. */
+  .track[data-paused] .track__rail {
+    animation: none;
+  }
+  .track[data-paused] .track__viewport {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
   }
   .track__list {
     display: flex;
@@ -155,12 +174,58 @@ const highlights = reviews.filter((review) => review.highlight);
 </style>
 
 <script>
-  // Pause/resume for the quote marquee; state lives on the wrapper as a data attribute.
+  import { cssTimeToSeconds, offsetToDelay, wheelToScrollLeft } from '../../lib/marquee';
+
+  // Pause turns the marquee into a scroller at the exact spot it stopped; Play resumes the
+  // animation from wherever the visitor scrolled to. State lives on the wrapper as data-paused.
   for (const track of document.querySelectorAll<HTMLElement>('[data-track]')) {
     const toggle = track.querySelector<HTMLButtonElement>('[data-track-toggle]');
-    toggle?.addEventListener('click', () => {
-      const isPaused = track.toggleAttribute('data-paused');
-      toggle.textContent = isPaused ? 'Play quotes' : 'Pause quotes';
+    const hint = track.querySelector<HTMLElement>('[data-track-hint]');
+    const viewport = track.querySelector<HTMLElement>('.track__viewport');
+    const rail = track.querySelector<HTMLElement>('.track__rail');
+    if (!toggle || !viewport || !rail) continue;
+
+    const duration = cssTimeToSeconds(getComputedStyle(rail).animationDuration);
+    const loopWidth = () => rail.scrollWidth / 2; // two identical copies of the list
+
+    const pause = () => {
+      const offset = -new DOMMatrixReadOnly(getComputedStyle(rail).transform).m41;
+      track.setAttribute('data-paused', '');
+      viewport.scrollLeft = offset;
+    };
+
+    const play = () => {
+      const delay = offsetToDelay(viewport.scrollLeft, loopWidth(), duration);
+      rail.style.animationDelay = `${delay}s`;
+      track.removeAttribute('data-paused');
+      viewport.scrollLeft = 0;
+    };
+
+    toggle.addEventListener('click', () => {
+      const willPause = !track.hasAttribute('data-paused');
+      if (willPause) pause();
+      else play();
+      toggle.textContent = willPause ? 'Play quotes' : 'Pause quotes';
+      toggle.setAttribute('aria-pressed', String(willPause));
+      if (hint) hint.hidden = !willPause;
     });
+
+    // Mouse wheel over the paused scroller moves it sideways; at either end the page scrolls.
+    viewport.addEventListener(
+      'wheel',
+      (event) => {
+        if (!track.hasAttribute('data-paused')) return;
+        const next = wheelToScrollLeft(
+          event.deltaX,
+          event.deltaY,
+          viewport.scrollLeft,
+          viewport.scrollWidth - viewport.clientWidth,
+        );
+        if (next === null) return;
+        event.preventDefault();
+        viewport.scrollLeft = next;
+      },
+      { passive: false },
+    );
   }
 </script>
